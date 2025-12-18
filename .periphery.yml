@@ -1,0 +1,35 @@
+# Periphery configuration for RAWG.IO
+# Dead code detection
+# https://github.com/peripheryapp/periphery
+
+# Scan targets
+targets:
+  - RAWGApp
+  - Core
+  - CoreUI
+  - CoreNetwork
+  - GamesFeature
+  - SearchFeature
+  - FavoritesFeature
+
+# Schemes to build
+schemes:
+  - RAWGApp
+
+# Output format
+format: xcode
+
+# Retain public declarations (API boundary)
+retain_public: true
+
+# Retain @objc declarations
+retain_objc_accessible: true
+
+# Retain SwiftUI previews
+retain_unused_protocol_func_params: true
+
+# Exclude patterns
+exclude:
+  - "Derived/*"
+  - "Tuist/.build/*"
+  - "*.generated.swift"

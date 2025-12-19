@@ -38,15 +38,18 @@ jobs:
         with:
           xcode-version: '16.2'
       
-      - name: Accept Xcode License
-        run: sudo xcodebuild -license accept
-      
       - name: Prepare Xcode
-        run: sudo xcodebuild -runFirstLaunch
+        run: |
+          sudo xcodebuild -license accept
+          sudo xcodebuild -runFirstLaunch
       
       - name: Install iOS Simulator Runtime
         run: |
-          xcodebuild -downloadPlatform iOS || echo "Download attempted"
+          echo "Downloading iOS platform..."
+          xcodebuild -downloadPlatform iOS
+          
+          echo "Available devices:"
+          xcrun simctl list devices available
       
       - name: Install Mise
         uses: jdx/mise-action@v2
@@ -62,7 +65,7 @@ jobs:
       - name: Build Project First
         run: |
           tuist build RAWGApp -- \
-            -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation)' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -derivedDataPath DerivedData \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
@@ -71,8 +74,9 @@ jobs:
       - name: Build Documentation
         run: |
           xcodebuild docbuild \
+            -workspace RAWG.xcworkspace \
             -scheme RAWGApp \
-            -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation)' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -derivedDataPath DerivedData \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
@@ -80,7 +84,6 @@ jobs:
       
       - name: Process Documentation
         run: |
-          # Find the documentation archive
           DOCC_ARCHIVE=$(find DerivedData -name "*.doccarchive" -type d | head -1)
           
           if [ -z "$DOCC_ARCHIVE" ]; then
@@ -88,21 +91,15 @@ jobs:
             exit 1
           fi
           
-          echo "Found documentation archive: $DOCC_ARCHIVE"
+          echo "Found: $DOCC_ARCHIVE"
           
-          # Convert to static website
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting "$DOCC_ARCHIVE" \
             --hosting-base-path RAWG.IO \
             --output-path docs
           
-          # Find the actual documentation folder name (case-sensitive)
           DOC_FOLDER=$(ls docs/documentation/ | head -1)
-          echo "Documentation folder: $DOC_FOLDER"
-          
-          # Create index redirect with correct path
           echo "<meta http-equiv=\"refresh\" content=\"0; url=documentation/$DOC_FOLDER/\">" > docs/index.html
-          echo "Created redirect to: documentation/$DOC_FOLDER/"
       
       - name: Upload Pages Artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

@@ -49,7 +49,7 @@ let project = Project(
         .target(
             name: "Core",
             destinations: destinations,
-            product: .framework,
+            product: .staticFramework,
             bundleId: "\(bundleIdPrefix).core",
             deploymentTargets: deploymentTargets,
             sources: ["Modules/Core/Sources/**"],
@@ -73,7 +73,7 @@ let project = Project(
         .target(
             name: "CoreUI",
             destinations: destinations,
-            product: .framework,
+            product: .staticFramework,
             bundleId: "\(bundleIdPrefix).coreui",
             deploymentTargets: deploymentTargets,
             sources: ["Modules/CoreUI/Sources/**"],
@@ -99,7 +99,7 @@ let project = Project(
         .target(
             name: "CoreNetwork",
             destinations: destinations,
-            product: .framework,
+            product: .staticFramework,
             bundleId: "\(bundleIdPrefix).corenetwork",
             deploymentTargets: deploymentTargets,
             sources: ["Modules/CoreNetwork/Sources/**"],
@@ -123,7 +123,7 @@ let project = Project(
         .target(
             name: "GamesFeature",
             destinations: destinations,
-            product: .framework,
+            product: .staticFramework,
             bundleId: "\(bundleIdPrefix).features.games",
             deploymentTargets: deploymentTargets,
             sources: ["Modules/GamesFeature/Sources/**"],
@@ -150,7 +150,7 @@ let project = Project(
         .target(
             name: "SearchFeature",
             destinations: destinations,
-            product: .framework,
+            product: .staticFramework,
             bundleId: "\(bundleIdPrefix).features.search",
             deploymentTargets: deploymentTargets,
             sources: ["Modules/SearchFeature/Sources/**"],
@@ -177,7 +177,7 @@ let project = Project(
         .target(
             name: "FavoritesFeature",
             destinations: destinations,
-            product: .framework,
+            product: .staticFramework,
             bundleId: "\(bundleIdPrefix).features.favorites",
             deploymentTargets: deploymentTargets,
             sources: ["Modules/FavoritesFeature/Sources/**"],

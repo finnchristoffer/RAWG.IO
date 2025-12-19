@@ -27,9 +27,3 @@ retain_objc_accessible: true
 
 # Retain SwiftUI previews
 retain_unused_protocol_func_params: true
-
-# Exclude patterns
-exclude:
-  - "Derived/*"
-  - "Tuist/.build/*"
-  - "*.generated.swift"

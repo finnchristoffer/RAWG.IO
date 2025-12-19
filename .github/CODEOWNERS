@@ -1,0 +1,49 @@
+# CODEOWNERS for RAWG.IO
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Default Owner
+# These owners will be requested for review when someone opens a PR
+# ─────────────────────────────────────────────────────────────────────────────
+* @finnchristoffer
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Core Modules
+# Critical infrastructure that requires careful review
+# ─────────────────────────────────────────────────────────────────────────────
+/Modules/Core/                  @finnchristoffer
+/Modules/CoreNetwork/           @finnchristoffer
+/Modules/CoreUI/                @finnchristoffer
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Feature Modules
+# ─────────────────────────────────────────────────────────────────────────────
+/Modules/GamesFeature/          @finnchristoffer
+/Modules/SearchFeature/         @finnchristoffer
+/Modules/FavoritesFeature/      @finnchristoffer
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main App
+# ─────────────────────────────────────────────────────────────────────────────
+/RAWGApp/                       @finnchristoffer
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Project Configuration
+# Changes here affect the entire project
+# ─────────────────────────────────────────────────────────────────────────────
+Project.swift                   @finnchristoffer
+Tuist.swift                     @finnchristoffer
+/Tuist/                         @finnchristoffer
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CI/CD Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+/.github/workflows/             @finnchristoffer
+/fastlane/                      @finnchristoffer
+/danger/                        @finnchristoffer
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Linting & Quality
+# ─────────────────────────────────────────────────────────────────────────────
+.swiftlint.yml                  @finnchristoffer
+.periphery.yml                  @finnchristoffer

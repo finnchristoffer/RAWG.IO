@@ -1,0 +1,42 @@
+# RAWG.IO Appfile
+# App Store Connect configuration
+# https://docs.fastlane.tools/advanced/Appfile
+
+# ─────────────────────────────────────────────────────────────────────────────
+# App Identifier
+# ─────────────────────────────────────────────────────────────────────────────
+app_identifier "com.finnchristoffer.rawg.app"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Apple Developer Account
+# SHOWCASE: Replace with your actual Apple ID
+# ─────────────────────────────────────────────────────────────────────────────
+# apple_id "your-apple-id@email.com"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Team Configuration
+# Find your Team ID: https://developer.apple.com/account/#/membership
+# ─────────────────────────────────────────────────────────────────────────────
+# team_id "XXXXXXXXXX"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# App Store Connect Team
+# For companies with multiple teams
+# ─────────────────────────────────────────────────────────────────────────────
+# itc_team_id "XXXXXXXXXX"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Per-Lane Configuration
+# Different credentials for different purposes
+# ─────────────────────────────────────────────────────────────────────────────
+for_platform :ios do
+  for_lane :beta do
+    # Use a specific Apple ID for TestFlight uploads
+    # apple_id "ci-account@email.com"
+  end
+
+  for_lane :release do
+    # Use a specific Apple ID for App Store submissions
+    # apple_id "release-account@email.com"
+  end
+end

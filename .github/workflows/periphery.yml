@@ -1,0 +1,93 @@
+name: Periphery
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.swift'
+      - '.periphery.yml'
+      - 'Project.swift'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.swift'
+      - '.periphery.yml'
+      - 'Project.swift'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  periphery:
+    name: Dead Code Detection
+    runs-on: macos-15
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '16.2'
+      
+      - name: Accept Xcode License
+        run: sudo xcodebuild -license accept
+      
+      - name: Install iOS Simulator Runtime
+        run: |
+          sudo xcodebuild -runFirstLaunch
+          xcodebuild -downloadPlatform iOS || echo "Download attempted"
+      
+      - name: Install Mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+      
+      - name: Cache Swift Packages
+        uses: actions/cache@v4
+        with:
+          path: Tuist/.build
+          key: ${{ runner.os }}-spm-${{ hashFiles('Tuist/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+      
+      - name: Install Periphery
+        run: brew install peripheryapp/periphery/periphery
+      
+      - name: Fetch Dependencies
+        run: tuist install
+      
+      - name: Generate Project
+        run: tuist generate --no-open
+      
+      - name: Build with Tuist
+        run: |
+          tuist build RAWGApp -- \
+            -destination 'platform=iOS Simulator,name=iPhone SE (3rd generation)' \
+            -derivedDataPath .derivedData \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+      
+      - name: Run Periphery
+        run: |
+          periphery scan \
+            --project RAWG.xcodeproj \
+            --schemes RAWGApp \
+            --skip-build \
+            --index-store-path .derivedData/Index.noindex/DataStore \
+            --targets RAWGApp \
+            --targets Core \
+            --targets CoreUI \
+            --targets CoreNetwork \
+            --targets GamesFeature \
+            --targets SearchFeature \
+            --targets FavoritesFeature \
+            --format github-actions \
+            --relative-results \
+            --retain-public \
+            --retain-objc-accessible \
+            --quiet

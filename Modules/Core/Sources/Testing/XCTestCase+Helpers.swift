@@ -2,7 +2,6 @@ import XCTest
 
 /// Extension providing additional testing utilities.
 public extension XCTestCase {
-    
     /// Creates test data from a JSON file in the test bundle.
     func loadJSON<T: Decodable>(
         _ filename: String,
@@ -18,7 +17,7 @@ public extension XCTestCase {
         let data = try Data(contentsOf: url)
         return try JSONDecoder().decode(T.self, from: data)
     }
-    
+
     /// Waits for an async operation with timeout.
     func awaitResult<T>(
         timeout: TimeInterval = 1.0,
@@ -28,7 +27,7 @@ public extension XCTestCase {
             try await operation()
         }
     }
-    
+
     /// Expects an async operation to throw a specific error.
     func expectError<E: Error & Equatable>(
         _ expectedError: E,

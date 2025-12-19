@@ -1,0 +1,280 @@
+# RAWG.IO Fastfile
+# Showcase Fastlane configuration demonstrating iOS automation best practices
+# https://docs.fastlane.tools
+
+# Update this to the minimum version you want to support
+fastlane_version "2.220.0"
+
+default_platform :ios
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+
+SCHEME = "RAWGApp"
+PROJECT = "RAWG.xcodeproj"
+WORKSPACE = "RAWG.xcworkspace"
+BUNDLE_ID = "com.finnchristoffer.rawg.app"
+SIMUALTOR = "iPhone 16"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Lanes
+# ─────────────────────────────────────────────────────────────────────────────
+
+platform :ios do
+
+  # ─── Setup ───────────────────────────────────────────────────────────────
+  
+  before_all do |lane|
+    # Ensure we're on the right branch for release lanes
+    if [:beta, :release].include?(lane)
+      ensure_git_status_clean
+      ensure_git_branch(branch: '^(main|release/.*)$')
+    end
+  end
+
+  # ─── Development ─────────────────────────────────────────────────────────
+  
+  desc "Run SwiftLint to check code style"
+  lane :lint do
+    swiftlint(
+      mode: :lint,
+      config_file: ".swiftlint.yml",
+      raise_if_swiftlint_error: true,
+      ignore_exit_status: false
+    )
+    UI.success "✅ SwiftLint passed!"
+  end
+
+  desc "Run all unit tests"
+  lane :test do
+    # Generate Tuist project first
+    sh("cd .. && mise exec -- tuist generate --no-open")
+    
+    run_tests(
+      scheme: SCHEME,
+      device: SIMUALTOR,
+      code_coverage: true,
+      result_bundle: true,
+      output_directory: "./fastlane/test_output",
+      output_types: "html,junit",
+      fail_build: true
+    )
+    UI.success "✅ All tests passed!"
+  end
+
+  desc "Run lint and tests together"
+  lane :ci do
+    lint
+    test
+    UI.success "✅ CI checks complete!"
+  end
+
+  # ─── Code Signing (Showcase) ─────────────────────────────────────────────
+  
+  desc "Sync development certificates and profiles"
+  lane :match_dev do
+    UI.message "📦 Syncing development certificates..."
+    
+    # SHOWCASE: This would sync certificates from a private git repo
+    # Uncomment and configure when you have an Apple Developer account
+    #
+    # match(
+    #   type: "development",
+    #   app_identifier: BUNDLE_ID,
+    #   readonly: is_ci,
+    #   force_for_new_devices: !is_ci
+    # )
+    
+    UI.important "⚠️ Match is configured but not active (showcase mode)"
+    UI.message "To activate: Set up a private git repo for certificates"
+  end
+
+  desc "Sync App Store certificates and profiles"
+  lane :match_prod do
+    UI.message "📦 Syncing production certificates..."
+    
+    # SHOWCASE: Production certificate sync
+    # Uncomment and configure when you have an Apple Developer account
+    #
+    # match(
+    #   type: "appstore",
+    #   app_identifier: BUNDLE_ID,
+    #   readonly: true
+    # )
+    
+    UI.important "⚠️ Match is configured but not active (showcase mode)"
+  end
+
+  # ─── Screenshots ─────────────────────────────────────────────────────────
+  
+  desc "Capture screenshots for all device sizes"
+  lane :screenshots do
+    UI.message "📸 Capturing screenshots..."
+    
+    # Generate Tuist project first
+    sh("cd .. && mise exec -- tuist generate --no-open")
+    
+    capture_screenshots(
+      scheme: "RAWGAppUITests",
+      output_directory: "./fastlane/screenshots",
+      clear_previous_screenshots: true,
+      devices: [
+        "iPhone 16 Pro Max",
+        "iPhone 16",
+        "iPhone SE (3rd generation)",
+        "iPad Pro (12.9-inch) (6th generation)"
+      ],
+      languages: ["en-US"],
+      override_status_bar: true,
+      stop_after_first_error: false
+    )
+    
+    UI.success "✅ Screenshots captured!"
+  end
+
+  desc "Upload screenshots to App Store Connect"
+  lane :upload_screenshots do
+    deliver(
+      skip_binary_upload: true,
+      skip_metadata: true,
+      overwrite_screenshots: true,
+      screenshots_path: "./fastlane/screenshots"
+    )
+    UI.success "✅ Screenshots uploaded to App Store Connect!"
+  end
+
+  # ─── Beta Distribution ───────────────────────────────────────────────────
+  
+  desc "Build and upload to TestFlight"
+  lane :beta do |options|
+    UI.message "🚀 Preparing beta build..."
+    
+    # Increment build number
+    increment_build_number(
+      build_number: options[:build_number] || (latest_testflight_build_number + 1)
+    )
+    
+    # Sync certificates (showcase)
+    match_prod
+    
+    # Generate Tuist project
+    sh("cd .. && mise exec -- tuist generate --no-open")
+    
+    # SHOWCASE: Build the app
+    # Uncomment when you have an Apple Developer account
+    #
+    # build_app(
+    #   scheme: SCHEME,
+    #   export_method: "app-store",
+    #   output_directory: "./fastlane/builds",
+    #   output_name: "RAWG.ipa",
+    #   include_bitcode: false,
+    #   include_symbols: true
+    # )
+    #
+    # upload_to_testflight(
+    #   skip_waiting_for_build_processing: true,
+    #   changelog: options[:changelog] || "Bug fixes and improvements"
+    # )
+    
+    UI.important "⚠️ Beta lane is configured but not active (showcase mode)"
+    UI.message "To activate: Configure App Store Connect API key"
+    
+    # Notify on Slack (if configured)
+    # slack(message: "🎉 New beta build uploaded to TestFlight!")
+  end
+
+  # ─── Release ─────────────────────────────────────────────────────────────
+  
+  desc "Submit app for App Store review"
+  lane :release do |options|
+    UI.message "🎯 Preparing release..."
+    
+    version = options[:version] || get_version_number(target: "RAWGApp")
+    
+    # Ensure we're releasing from main
+    ensure_git_branch(branch: "main")
+    
+    # Sync certificates
+    match_prod
+    
+    # Generate Tuist project
+    sh("cd .. && mise exec -- tuist generate --no-open")
+    
+    # SHOWCASE: Build and submit
+    # Uncomment when you have an Apple Developer account
+    #
+    # build_app(
+    #   scheme: SCHEME,
+    #   export_method: "app-store",
+    #   output_directory: "./fastlane/builds"
+    # )
+    #
+    # deliver(
+    #   submit_for_review: true,
+    #   automatic_release: false,
+    #   force: true,
+    #   precheck_include_in_app_purchases: false,
+    #   submission_information: {
+    #     add_id_info_uses_idfa: false
+    #   }
+    # )
+    
+    UI.important "⚠️ Release lane is configured but not active (showcase mode)"
+    
+    # Tag the release
+    # add_git_tag(tag: "v#{version}")
+    # push_git_tags
+    
+    # Notify
+    # slack(message: "🎉 Version #{version} submitted for App Store review!")
+  end
+
+  # ─── Utilities ───────────────────────────────────────────────────────────
+  
+  desc "Register new devices"
+  lane :register_devices do
+    register_devices(devices_file: "./fastlane/devices.txt")
+    match_dev
+    UI.success "✅ New devices registered!"
+  end
+
+  desc "Increment version number"
+  lane :bump do |options|
+    type = options[:type] || "patch" # major, minor, patch
+    
+    increment_version_number(
+      bump_type: type
+    )
+    
+    version = get_version_number(target: "RAWGApp")
+    UI.success "✅ Version bumped to #{version}"
+  end
+
+  desc "Clean derived data and build artifacts"
+  lane :clean do
+    clear_derived_data(derived_data_path: "../Derived")
+    sh("rm -rf ../DerivedData")
+    UI.success "✅ Cleaned up!"
+  end
+
+  # ─── Error Handling ──────────────────────────────────────────────────────
+  
+  error do |lane, exception|
+    UI.error "❌ Lane '#{lane}' failed with error: #{exception.message}"
+    
+    # Notify on Slack (if configured)
+    # slack(
+    #   message: "❌ Fastlane failed: #{lane}",
+    #   success: false,
+    #   payload: { "Error" => exception.message }
+    # )
+  end
+
+  after_all do |lane|
+    # Clean up build artifacts
+    clean_build_artifacts
+  end
+
+end

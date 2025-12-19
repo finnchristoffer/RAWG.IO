@@ -1,0 +1,76 @@
+# RAWG.IO Snapfile
+# Screenshot automation configuration
+# https://docs.fastlane.tools/actions/snapshot
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Devices
+# ─────────────────────────────────────────────────────────────────────────────
+devices([
+  "iPhone 16 Pro Max",
+  "iPhone 16 Pro",
+  "iPhone 16",
+  "iPhone SE (3rd generation)",
+  "iPad Pro 13-inch (M4)"
+])
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Languages
+# ─────────────────────────────────────────────────────────────────────────────
+languages([
+  "en-US"
+  # Add more languages as needed:
+  # "ja",
+  # "de-DE",
+  # "fr-FR"
+])
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Scheme
+# ─────────────────────────────────────────────────────────────────────────────
+scheme("RAWGAppUITests")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Output
+# ─────────────────────────────────────────────────────────────────────────────
+output_directory("./fastlane/screenshots")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Options
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Clear previous screenshots before capturing new ones
+clear_previous_screenshots(true)
+
+# Override status bar to show consistent time/battery
+override_status_bar(true)
+
+# Configure simulators before running
+override_status_bar_arguments("--time 9:41 --batteryState charged --batteryLevel 100")
+
+# Concurrent simulators for faster execution
+concurrent_simulators(true)
+
+# Number of simulators to run concurrently
+number_of_retries(3)
+
+# Skip screens that haven't changed
+skip_open_summary(true)
+
+# Stop after first error (useful for debugging)
+stop_after_first_error(false)
+
+# Dark mode support
+dark_mode(false)
+# To capture dark mode screenshots, create a separate lane with dark_mode(true)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Test Without Building
+# Speed up screenshot generation by using a pre-built app
+# ─────────────────────────────────────────────────────────────────────────────
+# test_without_building(true)
+# derived_data_path("./DerivedData")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# HTML Report
+# ─────────────────────────────────────────────────────────────────────────────
+html_template("./fastlane/screenshots/template.html")

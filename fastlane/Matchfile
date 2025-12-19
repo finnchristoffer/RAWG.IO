@@ -1,0 +1,56 @@
+# RAWG.IO Matchfile
+# Code signing configuration with Match
+# https://docs.fastlane.tools/actions/match
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Git Repository for Certificates
+# SHOWCASE: Replace with your private certificates repository
+# ─────────────────────────────────────────────────────────────────────────────
+# git_url "git@github.com:finnchristoffer/ios-certificates.git"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Storage Mode
+# Options: git, google_cloud, s3
+# ─────────────────────────────────────────────────────────────────────────────
+storage_mode "git"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# App Identifiers
+# List all bundle identifiers that need certificates
+# ─────────────────────────────────────────────────────────────────────────────
+app_identifier ["com.finnchristoffer.rawg.app"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Certificate Types
+# development, adhoc, appstore, enterprise
+# ─────────────────────────────────────────────────────────────────────────────
+type "development"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Team Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# team_id "XXXXXXXXXX"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Username
+# ─────────────────────────────────────────────────────────────────────────────
+# username "your-apple-id@email.com"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Options
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Auto-generate App Store Connect API key path
+# api_key_path "./fastlane/AuthKey.json"
+
+# Don't clone the entire git history, just the latest
+shallow_clone true
+
+# Clone using git protocol (faster on CI)
+clone_branch_directly true
+
+# Force creation of new provisioning profiles
+# force_for_new_devices true
+
+# Read-only mode (for CI)
+# readonly true

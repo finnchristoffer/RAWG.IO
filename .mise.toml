@@ -1,0 +1,5 @@
+# Mise configuration for RAWG.IO
+# https://mise.jdx.dev/
+
+[tools]
+tuist = "4.34.0"

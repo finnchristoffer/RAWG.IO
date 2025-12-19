@@ -4,7 +4,6 @@ import SnapshotTesting
 
 /// Extension providing snapshot testing helpers.
 public extension XCTestCase {
-    
     /// Asserts or records a snapshot of a SwiftUI view.
     func assertSnapshot<V: View>(
         of view: V,
@@ -17,7 +16,7 @@ public extension XCTestCase {
         let controller = UIHostingController(rootView: view)
         controller.view.frame = UIScreen.main.bounds
         controller.view.layoutIfNeeded()
-        
+
         SnapshotTesting.assertSnapshot(
             of: controller,
             as: .image(on: .iPhone13),
@@ -28,7 +27,7 @@ public extension XCTestCase {
             line: line
         )
     }
-    
+
     /// Asserts or records a snapshot of a UIViewController.
     func assertSnapshot(
         of controller: UIViewController,

@@ -11,7 +11,6 @@ import XCTest
 /// }
 /// ```
 public extension XCTestCase {
-    
     /// Tracks an instance for memory leaks.
     ///
     /// If the instance is not deallocated after the test completes,

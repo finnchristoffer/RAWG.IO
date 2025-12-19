@@ -47,18 +47,19 @@ if isBodyEmpty {
     fail("❌ Please provide a PR description explaining your changes.")
 }
 
-// Check if description still has template placeholders
-let templatePlaceholders = [
-    "<!-- Describe what this PR does and why -->",
-    "<!-- List the key changes -->",
-    "<!-- If UI changes, add screenshots or video -->"
+// Check if "Type of Change" has at least one checkbox selected
+let typeOfChangeOptions = [
+    "- [x] 🚀 Feature",
+    "- [x] 🐛 Bug Fix",
+    "- [x] ♻️ Refactor",
+    "- [x] 🔧 Build/CI",
+    "- [x] 📝 Documentation",
+    "- [x] ✅ Test"
 ]
 
-for placeholder in templatePlaceholders {
-    if prBody.contains(placeholder) && prBody.components(separatedBy: placeholder).count > 1 {
-        warn("📝 Please fill in all sections of the PR template.")
-        break
-    }
+let hasTypeSelected = typeOfChangeOptions.contains { prBody.contains($0) }
+if !hasTypeSelected && prBody.contains("Type of Change") {
+    warn("☑️ Please select at least one type of change in the PR template.")
 }
 
 // Check for linked issues

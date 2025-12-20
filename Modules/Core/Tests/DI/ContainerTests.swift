@@ -2,61 +2,61 @@ import XCTest
 import Factory
 @testable import Core
 
-/// TDD Tests for DI Container (Core module)
+/// Tests for DI Container (Core module)
 final class ContainerTests: XCTestCase {
     // MARK: - Storage Actor Registration
 
     func test_container_has_storageActor_registration() {
-        // Arrange/Act
-        let container = Container.shared
+        // Arrange
+        let sut = makeSUT()
 
-        // Assert
-        XCTAssertNotNil(
-            container.storageActor,
-            "Expected Container to have storageActor registration"
-        )
+        // Act/Assert
+        XCTAssertNotNil(sut.storageActor, "Expected Container to have storageActor registration")
     }
 
     func test_storageActor_is_singleton() {
         // Arrange
-        let container = Container.shared
+        let sut = makeSUT()
 
         // Act
-        let first = container.storageActor()
-        let second = container.storageActor()
+        let first = sut.storageActor()
+        let second = sut.storageActor()
 
         // Assert
-        XCTAssertTrue(
-            first === second,
-            "Expected StorageActor to be singleton - both instances should be identical"
-        )
+        XCTAssertTrue(first === second, "Expected StorageActor to be singleton - both instances should be identical")
     }
 
     // MARK: - Image Cache Actor Registration
 
     func test_container_has_imageCacheActor_registration() {
-        // Arrange/Act
-        let container = Container.shared
+        // Arrange
+        let sut = makeSUT()
 
-        // Assert
-        XCTAssertNotNil(
-            container.imageCacheActor,
-            "Expected Container to have imageCacheActor registration"
-        )
+        // Act/Assert
+        XCTAssertNotNil(sut.imageCacheActor, "Expected Container to have imageCacheActor registration")
     }
 
     func test_imageCacheActor_is_singleton() {
         // Arrange
-        let container = Container.shared
+        let sut = makeSUT()
 
         // Act
-        let first = container.imageCacheActor()
-        let second = container.imageCacheActor()
+        let first = sut.imageCacheActor()
+        let second = sut.imageCacheActor()
 
         // Assert
-        XCTAssertTrue(
-            first === second,
-            "Expected ImageCacheActor to be singleton - both instances should be identical"
-        )
+        XCTAssertTrue(first === second, "Expected ImageCacheActor to be singleton - both instances should be identical")
+    }
+
+    // MARK: - Helpers
+
+    private func makeSUT() -> Container {
+        let container = Container.shared
+
+        addTeardownBlock {
+            container.reset()
+        }
+
+        return container
     }
 }

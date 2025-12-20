@@ -7,15 +7,7 @@ final class StorageActorTests: XCTestCase {
 
     func test_save_and_load_codable_value() async throws {
         // Arrange
-        guard let testDefaults = UserDefaults(suiteName: "StorageActorTests") else {
-            XCTFail("Expected to create test UserDefaults")
-            return
-        }
-        testDefaults.removePersistentDomain(forName: "StorageActorTests")
-        let sut = StorageActor(
-            userDefaults: UserDefaultsStorage(defaults: testDefaults),
-            keychain: KeychainStorage()
-        )
+        let (sut, testDefaults) = makeSUT()
         let value = TestCodable(id: 1, name: "Test")
         let key = "test_key"
 
@@ -27,16 +19,13 @@ final class StorageActorTests: XCTestCase {
         XCTAssertEqual(result?.id, value.id, "Expected loaded value to match saved value")
 
         // Cleanup
-        testDefaults.removePersistentDomain(forName: "StorageActorTests")
+        testDefaults?.removePersistentDomain(forName: "StorageActorTests")
     }
 
     func test_save_secure_uses_keychain() async throws {
         // Arrange
         let keychainMock = StorageMock(loadResult: .success(nil))
-        let sut = StorageActor(
-            userDefaults: StorageMock(loadResult: .success(nil)),
-            keychain: keychainMock
-        )
+        let sut = makeStorageActor(keychain: keychainMock)
         let value = TestCodable(id: 1, name: "Secret")
         let key = "access_token"
 
@@ -50,10 +39,7 @@ final class StorageActorTests: XCTestCase {
     func test_delete_removes_value() async throws {
         // Arrange
         let userDefaultsMock = StorageMock(loadResult: .success(nil))
-        let sut = StorageActor(
-            userDefaults: userDefaultsMock,
-            keychain: StorageMock(loadResult: .success(nil))
-        )
+        let sut = makeStorageActor(userDefaults: userDefaultsMock)
         let key = "test_key"
 
         // Act
@@ -65,10 +51,7 @@ final class StorageActorTests: XCTestCase {
 
     func test_load_returns_nil_for_missing_key() async throws {
         // Arrange
-        let sut = StorageActor(
-            userDefaults: StorageMock(loadResult: .success(nil)),
-            keychain: StorageMock(loadResult: .success(nil))
-        )
+        let sut = makeStorageActor()
         let key = "nonexistent_key"
 
         // Act
@@ -76,6 +59,31 @@ final class StorageActorTests: XCTestCase {
 
         // Assert
         XCTAssertNil(result, "Expected load to return nil for nonexistent key")
+    }
+
+    // MARK: - Helpers
+
+    private func makeSUT() -> (sut: StorageActor, testDefaults: UserDefaults?) {
+        let suiteName = "StorageActorTests"
+        let testDefaults = UserDefaults(suiteName: suiteName)
+        testDefaults?.removePersistentDomain(forName: suiteName)
+
+        let sut = StorageActor(
+            userDefaults: UserDefaultsStorage(defaults: testDefaults ?? .standard),
+            keychain: StorageMock(loadResult: .success(nil))
+        )
+
+        return (sut, testDefaults)
+    }
+
+    private func makeStorageActor(
+        userDefaults: StorageProtocol? = nil,
+        keychain: StorageProtocol? = nil
+    ) -> StorageActor {
+        StorageActor(
+            userDefaults: userDefaults ?? StorageMock(loadResult: .success(nil)),
+            keychain: keychain ?? StorageMock(loadResult: .success(nil))
+        )
     }
 }
 

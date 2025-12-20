@@ -3,26 +3,10 @@ import XCTest
 
 /// Tests for UserDefaultsStorage
 final class UserDefaultsStorageTests: XCTestCase {
-    // MARK: - Properties
-
-    // swiftlint:disable implicitly_unwrapped_optional
-    private var sut: UserDefaultsStorage!
-    private var testDefaults: UserDefaults!
-    // swiftlint:enable implicitly_unwrapped_optional
-
-    // MARK: - Setup/Teardown
-
-    override func setUp() {
-        super.setUp()
-        testDefaults = UserDefaults(suiteName: "UserDefaultsStorageTests")
-        testDefaults.removePersistentDomain(forName: "UserDefaultsStorageTests")
-        sut = UserDefaultsStorage(defaults: testDefaults)
-    }
+    private static let suiteName = "UserDefaultsStorageTests"
 
     override func tearDown() {
-        testDefaults.removePersistentDomain(forName: "UserDefaultsStorageTests")
-        testDefaults = nil
-        sut = nil
+        UserDefaults(suiteName: Self.suiteName)?.removePersistentDomain(forName: Self.suiteName)
         super.tearDown()
     }
 
@@ -30,6 +14,7 @@ final class UserDefaultsStorageTests: XCTestCase {
 
     func test_save_stores_data_for_key() throws {
         // Arrange
+        let (sut, testDefaults) = makeSUT()
         let data = Data("test".utf8)
         let key = "test_key"
 
@@ -45,6 +30,7 @@ final class UserDefaultsStorageTests: XCTestCase {
 
     func test_load_returns_stored_data() throws {
         // Arrange
+        let (sut, testDefaults) = makeSUT()
         let data = Data("test".utf8)
         let key = "test_key"
         testDefaults.set(data, forKey: key)
@@ -58,6 +44,7 @@ final class UserDefaultsStorageTests: XCTestCase {
 
     func test_load_returns_nil_for_missing_key() throws {
         // Arrange
+        let (sut, _) = makeSUT()
         let key = "nonexistent_key"
 
         // Act
@@ -71,6 +58,7 @@ final class UserDefaultsStorageTests: XCTestCase {
 
     func test_delete_removes_data_for_key() throws {
         // Arrange
+        let (sut, testDefaults) = makeSUT()
         let data = Data("test".utf8)
         let key = "test_key"
         testDefaults.set(data, forKey: key)
@@ -80,5 +68,20 @@ final class UserDefaultsStorageTests: XCTestCase {
 
         // Assert
         XCTAssertNil(testDefaults.data(forKey: key), "Expected deleted key to be removed from UserDefaults")
+    }
+
+    // MARK: - Helpers
+
+    private func makeSUT(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (sut: UserDefaultsStorage, testDefaults: UserDefaults) {
+        let testDefaults = UserDefaults(suiteName: Self.suiteName) ?? .standard
+        testDefaults.removePersistentDomain(forName: Self.suiteName)
+
+        let sut = UserDefaultsStorage(defaults: testDefaults)
+        trackForMemoryLeaks(sut, file: file, line: line)
+
+        return (sut, testDefaults)
     }
 }

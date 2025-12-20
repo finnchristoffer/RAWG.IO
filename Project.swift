@@ -2,7 +2,7 @@ import ProjectDescription
 
 // MARK: - Project Settings
 let deploymentTargets: DeploymentTargets = .iOS("17.0")
-let destinations: Destinations = .iOS
+let destinations: Destinations = [.iPhone]
 let organizationName = "FinnChristoffer"
 let bundleIdPrefix = "com.finnchristoffer.rawg"
 

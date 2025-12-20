@@ -22,11 +22,11 @@ public extension XCTestCase {
     ///   - file: Source file where tracking was initiated (auto-captured)
     ///   - line: Source line where tracking was initiated (auto-captured)
     func trackForMemoryLeaks(
-        _ instance: AnyObject,
+        _ instance: some AnyObject & Sendable,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        addTeardownBlock { [weak instance] in
+        addTeardownBlock { @Sendable [weak instance] in
             XCTAssertNil(
                 instance,
                 "Instance should have been deallocated. Potential memory leak.",

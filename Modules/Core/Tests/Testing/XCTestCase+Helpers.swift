@@ -19,9 +19,9 @@ public extension XCTestCase {
     }
 
     /// Waits for an async operation with timeout.
-    func awaitResult<T>(
+    func awaitResult<T: Sendable>(
         timeout: TimeInterval = 1.0,
-        _ operation: @escaping () async throws -> T
+        _ operation: @escaping @Sendable () async throws -> T
     ) async throws -> T {
         try await withTimeout(seconds: timeout) {
             try await operation()
@@ -33,7 +33,7 @@ public extension XCTestCase {
         _ expectedError: E,
         file: StaticString = #filePath,
         line: UInt = #line,
-        from operation: () async throws -> some Any
+        from operation: @Sendable () async throws -> some Any
     ) async {
         do {
             _ = try await operation()
@@ -46,9 +46,9 @@ public extension XCTestCase {
     }
 }
 
-private func withTimeout<T>(
+private func withTimeout<T: Sendable>(
     seconds: TimeInterval,
-    operation: @escaping () async throws -> T
+    operation: @escaping @Sendable () async throws -> T
 ) async throws -> T {
     try await withThrowingTaskGroup(of: T.self) { group in
         group.addTask { try await operation() }

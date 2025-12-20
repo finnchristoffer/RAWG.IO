@@ -219,7 +219,7 @@ let project = Project(
             dependencies: [
                 .target(name: "RAWGApp")
             ]
-        ),
+        )
     ],
     schemes: [
         .scheme(

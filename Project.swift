@@ -14,11 +14,11 @@ let project = Project(
         base: [
             "SWIFT_VERSION": "6.0",
             "ENABLE_MODULE_VERIFIER": "YES",
-            "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS": "gnu17 gnu++20",
+            "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS": "gnu17 gnu++20"
         ],
         configurations: [
             .debug(name: "Debug"),
-            .release(name: "Release"),
+            .release(name: "Release")
         ]
     ),
     targets: [
@@ -31,7 +31,7 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             infoPlist: .extendingDefault(with: [
                 "UILaunchScreen": [:],
-                "CFBundleDisplayName": "RAWG",
+                "CFBundleDisplayName": "RAWG"
             ]),
             sources: ["RAWGApp/Sources/**"],
             resources: ["RAWGApp/Resources/**"],
@@ -41,7 +41,7 @@ let project = Project(
                 .target(name: "CoreNetwork"),
                 .target(name: "GamesFeature"),
                 .target(name: "SearchFeature"),
-                .target(name: "FavoritesFeature"),
+                .target(name: "FavoritesFeature")
             ]
         ),
         
@@ -54,7 +54,7 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/Core/Sources/**"],
             dependencies: [
-                .external(name: "Factory"),
+                .external(name: "Factory")
             ]
         ),
         .target(
@@ -65,7 +65,7 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/Core/Tests/**"],
             dependencies: [
-                .target(name: "Core"),
+                .target(name: "Core")
             ]
         ),
         
@@ -79,7 +79,7 @@ let project = Project(
             sources: ["Modules/CoreUI/Sources/**"],
             resources: ["Modules/CoreUI/Resources/**"],
             dependencies: [
-                .target(name: "Core"),
+                .target(name: "Core")
             ]
         ),
         .target(
@@ -91,7 +91,7 @@ let project = Project(
             sources: ["Modules/CoreUI/Tests/**"],
             dependencies: [
                 .target(name: "CoreUI"),
-                .external(name: "SnapshotTesting"),
+                .external(name: "SnapshotTesting")
             ]
         ),
         
@@ -104,7 +104,7 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/CoreNetwork/Sources/**"],
             dependencies: [
-                .target(name: "Core"),
+                .target(name: "Core")
             ]
         ),
         .target(
@@ -115,7 +115,7 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/CoreNetwork/Tests/**"],
             dependencies: [
-                .target(name: "CoreNetwork"),
+                .target(name: "CoreNetwork")
             ]
         ),
         
@@ -130,7 +130,7 @@ let project = Project(
             dependencies: [
                 .target(name: "Core"),
                 .target(name: "CoreUI"),
-                .target(name: "CoreNetwork"),
+                .target(name: "CoreNetwork")
             ]
         ),
         .target(
@@ -142,7 +142,7 @@ let project = Project(
             sources: ["Modules/GamesFeature/Tests/**"],
             dependencies: [
                 .target(name: "GamesFeature"),
-                .external(name: "SnapshotTesting"),
+                .external(name: "SnapshotTesting")
             ]
         ),
         
@@ -157,7 +157,7 @@ let project = Project(
             dependencies: [
                 .target(name: "Core"),
                 .target(name: "CoreUI"),
-                .target(name: "CoreNetwork"),
+                .target(name: "CoreNetwork")
             ]
         ),
         .target(
@@ -169,7 +169,7 @@ let project = Project(
             sources: ["Modules/SearchFeature/Tests/**"],
             dependencies: [
                 .target(name: "SearchFeature"),
-                .external(name: "SnapshotTesting"),
+                .external(name: "SnapshotTesting")
             ]
         ),
         
@@ -184,7 +184,7 @@ let project = Project(
             dependencies: [
                 .target(name: "Core"),
                 .target(name: "CoreUI"),
-                .target(name: "CoreNetwork"),
+                .target(name: "CoreNetwork")
             ]
         ),
         .target(
@@ -196,7 +196,7 @@ let project = Project(
             sources: ["Modules/FavoritesFeature/Tests/**"],
             dependencies: [
                 .target(name: "FavoritesFeature"),
-                .external(name: "SnapshotTesting"),
+                .external(name: "SnapshotTesting")
             ]
         ),
         
@@ -209,7 +209,7 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["RAWGApp/UITests/**"],
             dependencies: [
-                .target(name: "RAWGApp"),
+                .target(name: "RAWGApp")
             ]
         ),
     ],
@@ -225,12 +225,12 @@ let project = Project(
                     "CoreNetworkTests",
                     "GamesFeatureTests",
                     "SearchFeatureTests",
-                    "FavoritesFeatureTests",
+                    "FavoritesFeatureTests"
                 ],
                 options: .options(coverage: true)
             ),
             runAction: .runAction(configuration: "Debug"),
             archiveAction: .archiveAction(configuration: "Release")
-        ),
+        )
     ]
 )

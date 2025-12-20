@@ -2,6 +2,7 @@ import XCTest
 import Factory
 @testable import Core
 
+/// TDD Tests for DI Container (Core module)
 final class ContainerTests: XCTestCase {
     // MARK: - Storage Actor Registration
 
@@ -56,34 +57,6 @@ final class ContainerTests: XCTestCase {
         XCTAssertTrue(
             first === second,
             "Expected ImageCacheActor to be singleton - both instances should be identical"
-        )
-    }
-
-    // MARK: - Favorites Actor Registration
-
-    func test_container_has_favoritesActor_registration() {
-        // Arrange/Act
-        let container = Container.shared
-
-        // Assert
-        XCTAssertNotNil(
-            container.favoritesActor,
-            "Expected Container to have favoritesActor registration"
-        )
-    }
-
-    func test_favoritesActor_is_singleton() {
-        // Arrange
-        let container = Container.shared
-
-        // Act
-        let first = container.favoritesActor()
-        let second = container.favoritesActor()
-
-        // Assert
-        XCTAssertTrue(
-            first === second,
-            "Expected FavoritesActor to be singleton - both instances should be identical"
         )
     }
 }

@@ -1,12 +1,13 @@
 import Factory
 
-/// DI Container extensions for Core module actors.
+/// DI Container extensions for Core module.
+///
+/// Generic and reusable across projects.
 ///
 /// ## Usage
 /// ```swift
 /// @Injected(\.storageActor) var storage
 /// @Injected(\.imageCacheActor) var imageCache
-/// @Injected(\.favoritesActor) var favorites
 /// ```
 public extension Container {
     // MARK: - Storage
@@ -22,14 +23,6 @@ public extension Container {
     /// Thread-safe image cache (singleton).
     var imageCacheActor: Factory<ImageCacheActor> {
         self { ImageCacheActor() }
-            .singleton
-    }
-
-    // MARK: - Favorites
-
-    /// SwiftData favorites persistence (singleton).
-    var favoritesActor: Factory<FavoritesActor> {
-        self { FavoritesActor() }
             .singleton
     }
 }

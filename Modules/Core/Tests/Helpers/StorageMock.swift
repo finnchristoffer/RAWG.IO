@@ -1,4 +1,5 @@
 import Foundation
+@testable import Core
 
 /// Mock for storage protocol testing.
 ///
@@ -16,7 +17,7 @@ import Foundation
 /// // Verify calls
 /// XCTAssertEqual(mock.loadedKeys, ["my_key"])
 /// ```
-public final class StorageMock: @unchecked Sendable {
+public final class StorageMock: StorageProtocol, @unchecked Sendable {
     // MARK: - Spy (captured calls)
 
     public private(set) var loadedKeys: [String] = []

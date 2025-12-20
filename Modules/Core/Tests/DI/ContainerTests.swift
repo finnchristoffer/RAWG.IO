@@ -2,20 +2,18 @@ import XCTest
 import Factory
 @testable import Core
 
-/// TDD Tests for DI Container
-///
-/// RED Phase: These tests should FAIL initially because
-/// the Container extensions don't exist yet.
 final class ContainerTests: XCTestCase {
-
     // MARK: - Storage Actor Registration
 
     func test_container_has_storageActor_registration() {
         // Arrange/Act
         let container = Container.shared
 
-        // Assert - This should fail because storageActor doesn't exist
-        XCTAssertNotNil(container.storageActor)
+        // Assert
+        XCTAssertNotNil(
+            container.storageActor,
+            "Expected Container to have storageActor registration"
+        )
     }
 
     func test_storageActor_is_singleton() {
@@ -26,8 +24,11 @@ final class ContainerTests: XCTestCase {
         let first = container.storageActor()
         let second = container.storageActor()
 
-        // Assert - Singletons should return same instance
-        XCTAssertTrue(first === second)
+        // Assert
+        XCTAssertTrue(
+            first === second,
+            "Expected StorageActor to be singleton - both instances should be identical"
+        )
     }
 
     // MARK: - Image Cache Actor Registration
@@ -37,7 +38,10 @@ final class ContainerTests: XCTestCase {
         let container = Container.shared
 
         // Assert
-        XCTAssertNotNil(container.imageCacheActor)
+        XCTAssertNotNil(
+            container.imageCacheActor,
+            "Expected Container to have imageCacheActor registration"
+        )
     }
 
     func test_imageCacheActor_is_singleton() {
@@ -49,7 +53,10 @@ final class ContainerTests: XCTestCase {
         let second = container.imageCacheActor()
 
         // Assert
-        XCTAssertTrue(first === second)
+        XCTAssertTrue(
+            first === second,
+            "Expected ImageCacheActor to be singleton - both instances should be identical"
+        )
     }
 
     // MARK: - Favorites Actor Registration
@@ -59,7 +66,10 @@ final class ContainerTests: XCTestCase {
         let container = Container.shared
 
         // Assert
-        XCTAssertNotNil(container.favoritesActor)
+        XCTAssertNotNil(
+            container.favoritesActor,
+            "Expected Container to have favoritesActor registration"
+        )
     }
 
     func test_favoritesActor_is_singleton() {
@@ -71,6 +81,9 @@ final class ContainerTests: XCTestCase {
         let second = container.favoritesActor()
 
         // Assert
-        XCTAssertTrue(first === second)
+        XCTAssertTrue(
+            first === second,
+            "Expected FavoritesActor to be singleton - both instances should be identical"
+        )
     }
 }

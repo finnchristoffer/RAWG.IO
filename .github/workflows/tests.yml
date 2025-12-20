@@ -22,7 +22,20 @@ jobs:
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.0'
+          xcode-version: '16.2'
+      
+      - name: Prepare Xcode
+        run: |
+          sudo xcodebuild -license accept
+          sudo xcodebuild -runFirstLaunch
+      
+      - name: Install iOS Simulator Runtime
+        run: |
+          echo "Downloading iOS platform..."
+          xcodebuild -downloadPlatform iOS
+          
+          echo "Available devices:"
+          xcrun simctl list devices available
       
       - name: Install Mise
         uses: jdx/mise-action@v2
@@ -35,19 +48,18 @@ jobs:
       - name: Generate Project
         run: tuist generate --no-open
       
-      - name: List Available Simulators
-        run: xcrun simctl list devices available
-      
       - name: Run Tests
         run: |
           xcodebuild test \
+            -workspace RAWG.xcworkspace \
             -scheme RAWGApp \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.1' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -resultBundlePath TestResults.xcresult \
             -enableCodeCoverage YES \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            | xcpretty --report junit --output test-results.xml || true
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty --report junit --output test-results.xml
       
       - name: Upload Test Results
         uses: actions/upload-artifact@v4

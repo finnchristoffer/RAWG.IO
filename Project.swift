@@ -6,11 +6,6 @@ let destinations: Destinations = [.iPhone]
 let organizationName = "FinnChristoffer"
 let bundleIdPrefix = "com.finnchristoffer.rawg"
 
-// MARK: - Helper for TestableTarget
-func testableTarget(_ name: String) -> TestableTarget {
-    .testableTarget(target: .init(stringLiteral: name), isRandomExecutionOrdering: true)
-}
-
 // MARK: - Project
 let project = Project(
     name: "RAWG",
@@ -19,9 +14,7 @@ let project = Project(
         base: [
             "SWIFT_VERSION": "6.0",
             "ENABLE_MODULE_VERIFIER": "YES",
-            "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS": "gnu17 gnu++20",
-            "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
-            "SWIFT_EMIT_LOC_STRINGS": "YES"
+            "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS": "gnu17 gnu++20"
         ],
         configurations: [
             .debug(name: "Debug"),
@@ -72,8 +65,7 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/Core/Tests/**"],
             dependencies: [
-                .target(name: "Core"),
-                .external(name: "SnapshotTesting")
+                .target(name: "Core")
             ]
         ),
         
@@ -219,7 +211,7 @@ let project = Project(
             dependencies: [
                 .target(name: "RAWGApp")
             ]
-        )
+        ),
     ],
     schemes: [
         .scheme(
@@ -228,71 +220,17 @@ let project = Project(
             buildAction: .buildAction(targets: ["RAWGApp"]),
             testAction: .targets(
                 [
-                    testableTarget("CoreTests"),
-                    testableTarget("CoreUITests"),
-                    testableTarget("CoreNetworkTests"),
-                    testableTarget("GamesFeatureTests"),
-                    testableTarget("SearchFeatureTests"),
-                    testableTarget("FavoritesFeatureTests")
+                    "CoreTests",
+                    "CoreUITests",
+                    "CoreNetworkTests",
+                    "GamesFeatureTests",
+                    "SearchFeatureTests",
+                    "FavoritesFeatureTests"
                 ],
                 options: .options(coverage: true)
             ),
             runAction: .runAction(configuration: "Debug"),
             archiveAction: .archiveAction(configuration: "Release")
-        ),
-        .scheme(
-            name: "Core",
-            shared: true,
-            buildAction: .buildAction(targets: ["Core"]),
-            testAction: .targets(
-                [testableTarget("CoreTests")],
-                options: .options(coverage: true)
-            )
-        ),
-        .scheme(
-            name: "CoreUI",
-            shared: true,
-            buildAction: .buildAction(targets: ["CoreUI"]),
-            testAction: .targets(
-                [testableTarget("CoreUITests")],
-                options: .options(coverage: true)
-            )
-        ),
-        .scheme(
-            name: "CoreNetwork",
-            shared: true,
-            buildAction: .buildAction(targets: ["CoreNetwork"]),
-            testAction: .targets(
-                [testableTarget("CoreNetworkTests")],
-                options: .options(coverage: true)
-            )
-        ),
-        .scheme(
-            name: "GamesFeature",
-            shared: true,
-            buildAction: .buildAction(targets: ["GamesFeature"]),
-            testAction: .targets(
-                [testableTarget("GamesFeatureTests")],
-                options: .options(coverage: true)
-            )
-        ),
-        .scheme(
-            name: "SearchFeature",
-            shared: true,
-            buildAction: .buildAction(targets: ["SearchFeature"]),
-            testAction: .targets(
-                [testableTarget("SearchFeatureTests")],
-                options: .options(coverage: true)
-            )
-        ),
-        .scheme(
-            name: "FavoritesFeature",
-            shared: true,
-            buildAction: .buildAction(targets: ["FavoritesFeature"]),
-            testAction: .targets(
-                [testableTarget("FavoritesFeatureTests")],
-                options: .options(coverage: true)
-            )
         )
     ]
 )

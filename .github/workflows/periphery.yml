@@ -37,32 +37,9 @@ jobs:
         run: sudo xcodebuild -license accept
       
       - name: Install iOS Simulator Runtime
-        uses: nick-invision/retry@v3
-        with:
-          timeout_minutes: 30
-          max_attempts: 3
-          retry_wait_seconds: 30
-          command: |
-            sudo xcodebuild -runFirstLaunch
-            xcodebuild -downloadPlatform iOS
-            
-            echo "Available devices:"
-            xcrun simctl list devices available
-      
-      - name: Select Simulator
-        id: simulator
         run: |
-          # Get the first available iPhone simulator
-          DEVICE=$(xcrun simctl list devices available -j | jq -r '.devices | to_entries[] | select(.key | contains("iOS")) | .value[] | select(.name | contains("iPhone")) | .name' | head -1)
-          
-          if [ -z "$DEVICE" ]; then
-            echo "No iPhone simulator found!"
-            xcrun simctl list devices available
-            exit 1
-          fi
-          
-          echo "Selected device: $DEVICE"
-          echo "device=$DEVICE" >> $GITHUB_OUTPUT
+          sudo xcodebuild -runFirstLaunch
+          xcodebuild -downloadPlatform iOS || echo "Download attempted"
       
       - name: Install Mise
         uses: jdx/mise-action@v2
@@ -89,7 +66,7 @@ jobs:
       - name: Build with Tuist
         run: |
           tuist build RAWGApp -- \
-            -destination 'platform=iOS Simulator,name=${{ steps.simulator.outputs.device }}' \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
             -derivedDataPath .derivedData \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \

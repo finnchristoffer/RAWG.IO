@@ -151,7 +151,10 @@ implicitly_unwrapped_optional:
 custom_rules:
   no_print_statement:
     name: "No print() statements"
-    regex: "^(?!\\s*///).*\\bprint\\s*\\("
+    regex: "\\bprint\\s*\\("
+    match_kinds:
+      - identifier
+      - keyword
     message: "Use Logger instead of print() for production code"
     severity: warning
     

@@ -31,16 +31,16 @@ public protocol ExtCompatible {
 
 // MARK: - Default Implementation
 
-extension ExtCompatible {
+public extension ExtCompatible {
     /// Default static namespace accessor.
-    public static var ext: Ext<Self>.Type {
+    static var ext: Ext<Self>.Type {
         get { Ext<Self>.self }
         // swiftlint:disable:next unused_setter_value
         set { }
     }
-    
+
     /// Default instance namespace accessor.
-    public var ext: Ext<Self> {
+    var ext: Ext<Self> {
         get { Ext(self) }
         // swiftlint:disable:next unused_setter_value
         set { }

@@ -3,6 +3,7 @@ import SwiftUI
 import SnapshotTesting
 
 /// Extension providing snapshot testing helpers.
+@MainActor
 public extension XCTestCase {
     /// Asserts or records a snapshot of a SwiftUI view.
     func assertSnapshot<V: View>(

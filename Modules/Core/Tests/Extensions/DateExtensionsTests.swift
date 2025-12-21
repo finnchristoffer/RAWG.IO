@@ -8,8 +8,10 @@ final class DateExtensionsTests: XCTestCase {
     func test_iso8601String_formats_date_correctly() {
         // Arrange
         var calendar = Calendar(identifier: .gregorian)
+        // swiftlint:disable:next force_unwrapping
         calendar.timeZone = TimeZone(identifier: "UTC")!
         let components = DateComponents(year: 2024, month: 1, day: 15, hour: 10, minute: 30, second: 0)
+        // swiftlint:disable:next force_unwrapping
         let sut = calendar.date(from: components)!
 
         // Act
@@ -65,4 +67,3 @@ final class DateExtensionsTests: XCTestCase {
         XCTAssertTrue(result.contains("day"), "Expected days in result")
     }
 }
-

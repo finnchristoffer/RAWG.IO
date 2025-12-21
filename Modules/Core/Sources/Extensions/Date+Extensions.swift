@@ -23,4 +23,3 @@ public extension Ext where Base == Date {
         return formatter.localizedString(for: base, relativeTo: Date())
     }
 }
-

@@ -25,4 +25,3 @@ public extension Ext where Base == String {
         base.isEmpty ? nil : base
     }
 }
-

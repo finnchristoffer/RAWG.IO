@@ -107,4 +107,3 @@ final class StringExtensionsTests: XCTestCase {
         XCTAssertEqual(result, "   ", "Whitespace-only string should return self (not empty)")
     }
 }
-

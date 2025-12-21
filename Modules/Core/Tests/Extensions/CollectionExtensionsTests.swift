@@ -71,4 +71,3 @@ final class CollectionExtensionsTests: XCTestCase {
         XCTAssertEqual(result, "c", "Expected last element")
     }
 }
-

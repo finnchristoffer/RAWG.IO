@@ -17,4 +17,3 @@ public extension Ext where Base: Collection {
         base.indices.contains(index) ? base[index] : nil
     }
 }
-

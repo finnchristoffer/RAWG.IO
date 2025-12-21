@@ -1,3 +1,4 @@
+// swiftlint:disable:this file_name
 import XCTest
 @testable import CoreNetwork
 
@@ -8,6 +9,7 @@ final class EndpointTests: XCTestCase {
     func test_url_builds_correctly_from_baseURL_and_path() {
         // Arrange
         let sut = MockEndpoint(
+            // swiftlint:disable:next force_unwrapping
             baseURL: URL(string: "https://api.example.com")!,
             path: "/users"
         )
@@ -22,6 +24,7 @@ final class EndpointTests: XCTestCase {
     func test_url_includes_query_items() {
         // Arrange
         let sut = MockEndpoint(
+            // swiftlint:disable:next force_unwrapping
             baseURL: URL(string: "https://api.example.com")!,
             path: "/users",
             queryItems: [
@@ -43,6 +46,7 @@ final class EndpointTests: XCTestCase {
     func test_default_method_is_get() {
         // Arrange
         let sut = MockEndpoint(
+            // swiftlint:disable:next force_unwrapping
             baseURL: URL(string: "https://api.example.com")!,
             path: "/users"
         )
@@ -54,6 +58,7 @@ final class EndpointTests: XCTestCase {
     func test_default_headers_is_empty() {
         // Arrange
         let sut = MockEndpoint(
+            // swiftlint:disable:next force_unwrapping
             baseURL: URL(string: "https://api.example.com")!,
             path: "/users"
         )
@@ -65,6 +70,7 @@ final class EndpointTests: XCTestCase {
     func test_default_queryItems_is_empty() {
         // Arrange
         let sut = MockEndpoint(
+            // swiftlint:disable:next force_unwrapping
             baseURL: URL(string: "https://api.example.com")!,
             path: "/users"
         )

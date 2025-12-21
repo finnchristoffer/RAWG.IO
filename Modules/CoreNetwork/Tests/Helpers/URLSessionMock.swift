@@ -1,3 +1,4 @@
+// swiftlint:disable:this file_name
 import Foundation
 @testable import CoreNetwork
 
@@ -24,7 +25,7 @@ public final class URLSessionMock: URLSessionProtocol, @unchecked Sendable {
     /// Convenience init for successful response with status code.
     public init(data: Data = Data(), statusCode: Int = 200) {
         // swiftlint:disable:next force_unwrapping
-        let url = URL(string: "https://api.rawg.io")!
+        let url = URL(string: "https://api.example.com")!
         guard let response = HTTPURLResponse(
             url: url,
             statusCode: statusCode,

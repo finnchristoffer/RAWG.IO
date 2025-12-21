@@ -113,7 +113,7 @@ final class APIClientTests: XCTestCase {
     ) -> (APIClient, URLSessionMock) {
         let mock = URLSessionMock(data: data, statusCode: statusCode)
         // swiftlint:disable:next force_unwrapping
-        let baseURL = URL(string: "https://api.rawg.io/api")!
+        let baseURL = URL(string: "https://api.example.com")!
         let sut = APIClient(baseURL: baseURL, session: mock)
         return (sut, mock)
     }
@@ -125,7 +125,7 @@ final class APIClientTests: XCTestCase {
     ) -> (APIClient, URLSessionMock) {
         let mock = URLSessionMock(error: error)
         // swiftlint:disable:next force_unwrapping
-        let baseURL = URL(string: "https://api.rawg.io/api")!
+        let baseURL = URL(string: "https://api.example.com")!
         let sut = APIClient(baseURL: baseURL, session: mock)
         return (sut, mock)
     }

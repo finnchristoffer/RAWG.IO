@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 import Common
 import Factory
+import Core
 
 /// ViewModel for the Games list screen.
 @MainActor
@@ -25,7 +26,7 @@ final class GamesViewModel: ObservableObject {
         self.getGamesUseCase = getGamesUseCase
     }
 
-    // MARK: -  Methods
+    // MARK: - Methods
 
     /// Load the initial page of games.
     func loadGames() async {
@@ -71,7 +72,7 @@ final class GamesViewModel: ObservableObject {
             currentPage = nextPage
         } catch {
             // Silent fail for pagination errors
-            print("Pagination error: \(error)")
+            Logger.error("Pagination error: \(error)")
         }
 
         isLoadingMore = false

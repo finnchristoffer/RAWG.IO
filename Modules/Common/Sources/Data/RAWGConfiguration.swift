@@ -2,9 +2,8 @@ import Foundation
 
 /// RAWG API configuration.
 public enum RAWGConfiguration: Sendable {
-    // swiftlint:disable:next force_unwrapping
     /// The base URL for RAWG API.
-    public static let baseURL = URL(string: "https://api.rawg.io/api")!
+    public static let baseURL = URL(string: "https://api.rawg.io/api")! // swiftlint:disable:this force_unwrapping
 
     /// Default page size for paginated requests.
     public static let defaultPageSize = 20

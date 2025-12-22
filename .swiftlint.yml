@@ -78,6 +78,7 @@ disabled_rules:
   - trailing_whitespace
   - todo
   - nesting
+  - attributes
 
 # Rule configurations
 line_length:

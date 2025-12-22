@@ -20,8 +20,7 @@ extension Container {
     // MARK: - ViewModels (internal)
 
     /// GamesViewModel for games list screen.
-    @MainActor
-    var gamesViewModel: Factory<GamesViewModel> {
+    @MainActor var gamesViewModel: Factory<GamesViewModel> {
         self { GamesViewModel(getGamesUseCase: self.getGamesUseCase()) }
     }
 }

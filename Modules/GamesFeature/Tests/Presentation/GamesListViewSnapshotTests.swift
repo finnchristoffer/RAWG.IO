@@ -8,13 +8,6 @@ import SnapshotTesting
 /// Snapshot tests for GamesListView.
 @MainActor
 final class GamesListViewSnapshotTests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        // Uncomment to record new snapshots
-        // isRecording = true
-    }
-
     func test_gamesListView_loading_state() {
         // Arrange - test skeleton loading directly since viewModel.isLoading is internal
         let sut = skeletonLoadingView

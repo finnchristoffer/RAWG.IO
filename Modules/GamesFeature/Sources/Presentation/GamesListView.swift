@@ -27,19 +27,15 @@ struct GamesListView: View {
 
     // MARK: - Content
 
-    @ViewBuilder
-    private var content: some View {
+    @ViewBuilder private var content: some View {
         if viewModel.isLoading && viewModel.games.isEmpty {
             skeletonLoadingView
         } else if let error = viewModel.error, viewModel.games.isEmpty {
-            ErrorView(
-                message: error.localizedDescription,
-                retryAction: {
-                    Task {
-                        await viewModel.loadGames()
-                    }
+            ErrorView(message: error.localizedDescription) {
+                Task {
+                    await viewModel.loadGames()
                 }
-            )
+            }
         } else if viewModel.games.isEmpty {
             emptyStateView
         } else {

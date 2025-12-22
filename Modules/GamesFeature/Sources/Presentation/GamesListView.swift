@@ -30,7 +30,7 @@ public struct GamesListView: View {
     @ViewBuilder
     private var content: some View {
         if viewModel.isLoading && viewModel.games.isEmpty {
-            LoadingView(message: "Loading games...")
+            skeletonLoadingView
         } else if let error = viewModel.error, viewModel.games.isEmpty {
             ErrorView(
                 message: error.localizedDescription,
@@ -40,8 +40,40 @@ public struct GamesListView: View {
                     }
                 }
             )
+        } else if viewModel.games.isEmpty {
+            emptyStateView
         } else {
             gamesList
+        }
+    }
+
+    // MARK: - Skeleton Loading
+
+    private var skeletonLoadingView: some View {
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(0..<5, id: \.self) { _ in
+                    GameCardSkeleton()
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+        }
+        .background(ColorTokens.background)
+    }
+
+    // MARK: - Empty State
+
+    private var emptyStateView: some View {
+        EmptyStateView(
+            title: "No Games Found",
+            message: "We couldn't find any games. Pull down to refresh and try again.",
+            systemImage: "gamecontroller",
+            actionTitle: "Refresh"
+        ) {
+            Task {
+                await viewModel.loadGames()
+            }
         }
     }
 

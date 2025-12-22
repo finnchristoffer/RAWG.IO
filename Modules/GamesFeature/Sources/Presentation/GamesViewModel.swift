@@ -3,13 +3,14 @@ import Combine
 import Common
 
 /// ViewModel for the Games list screen.
+@MainActor
 public final class GamesViewModel: ObservableObject {
     // MARK: - Published State
 
-    @MainActor @Published public private(set) var games: [GameEntity] = []
-    @MainActor @Published public private(set) var isLoading = false
-    @MainActor @Published public private(set) var error: Error?
-    @MainActor @Published public private(set) var hasMorePages = true
+    @Published public private(set) var games: [GameEntity] = []
+    @Published public private(set) var isLoading = false
+    @Published public private(set) var error: Error?
+    @Published public private(set) var hasMorePages = true
 
     // MARK: - Private
 
@@ -19,14 +20,13 @@ public final class GamesViewModel: ObservableObject {
 
     // MARK: - Init
 
-    public init(getGamesUseCase: GetGamesUseCase) {
+    public nonisolated init(getGamesUseCase: GetGamesUseCase) {
         self.getGamesUseCase = getGamesUseCase
     }
 
     // MARK: - Public Methods
 
     /// Load the initial page of games.
-    @MainActor
     public func loadGames() async {
         guard !isLoading else { return }
 
@@ -48,7 +48,6 @@ public final class GamesViewModel: ObservableObject {
     }
 
     /// Load the next page of games (pagination).
-    @MainActor
     public func loadMoreIfNeeded(currentItem: GameEntity?) async {
         guard let currentItem else { return }
         guard !isLoadingMore, hasMorePages else { return }
@@ -78,7 +77,6 @@ public final class GamesViewModel: ObservableObject {
     }
 
     /// Refresh the games list (pull-to-refresh).
-    @MainActor
     public func refresh() async {
         await loadGames()
     }

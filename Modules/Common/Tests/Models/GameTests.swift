@@ -1,9 +1,9 @@
 import XCTest
 @testable import Common
 
-/// Tests for Game model decoding.
-final class GameTests: XCTestCase {
-    func test_game_decodes_from_valid_json() throws {
+/// Tests for GameDTO decoding.
+final class GameDTOTests: XCTestCase {
+    func test_gameDTO_decodes_from_valid_json() throws {
         // Arrange
         let json = Data("""
         {
@@ -26,7 +26,7 @@ final class GameTests: XCTestCase {
         """.utf8)
 
         // Act
-        let sut = try JSONDecoder().decode(Game.self, from: json)
+        let sut = try JSONDecoder().decode(GameDTO.self, from: json)
 
         // Assert
         XCTAssertEqual(sut.id, 1)
@@ -37,7 +37,7 @@ final class GameTests: XCTestCase {
         XCTAssertEqual(sut.genres?.first?.name, "Action")
     }
 
-    func test_game_decodes_with_missing_optional_fields() throws {
+    func test_gameDTO_decodes_with_missing_optional_fields() throws {
         // Arrange
         let json = Data("""
         {
@@ -56,7 +56,7 @@ final class GameTests: XCTestCase {
         """.utf8)
 
         // Act
-        let sut = try JSONDecoder().decode(Game.self, from: json)
+        let sut = try JSONDecoder().decode(GameDTO.self, from: json)
 
         // Assert
         XCTAssertEqual(sut.id, 1)

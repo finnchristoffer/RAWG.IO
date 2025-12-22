@@ -2,21 +2,23 @@ import Foundation
 import Common
 
 /// Mock implementation of GamesRepositoryProtocol for testing.
-final class MockGamesRepository: GamesRepositoryProtocol, @unchecked Sendable {
-    var stubbedGamesResult: PaginatedResponse<Game>?
-    var stubbedGameDetailResult: GameDetail?
-    var stubbedSearchResult: PaginatedResponse<Game>?
-    var stubbedError: Error?
+public final class MockGamesRepository: GamesRepositoryProtocol, @unchecked Sendable {
+    public var stubbedGamesResult: PaginatedEntity<GameEntity>?
+    public var stubbedGameDetailResult: GameDetailEntity?
+    public var stubbedSearchResult: PaginatedEntity<GameEntity>?
+    public var stubbedError: Error?
 
-    var getGamesCallCount = 0
-    var getGameDetailCallCount = 0
-    var searchGamesCallCount = 0
+    public var getGamesCallCount = 0
+    public var getGameDetailCallCount = 0
+    public var searchGamesCallCount = 0
 
-    var lastGamesInput: GamesInput?
-    var lastGameDetailInput: GameDetailInput?
-    var lastSearchInput: SearchGamesInput?
+    public var lastGamesInput: GamesInput?
+    public var lastGameDetailInput: GameDetailInput?
+    public var lastSearchInput: SearchGamesInput?
 
-    func getGames(_ input: GamesInput) async throws -> PaginatedResponse<Game> {
+    public init() {}
+
+    public func getGames(_ input: GamesInput) async throws -> PaginatedEntity<GameEntity> {
         getGamesCallCount += 1
         lastGamesInput = input
 
@@ -24,10 +26,15 @@ final class MockGamesRepository: GamesRepositoryProtocol, @unchecked Sendable {
             throw error
         }
 
-        return stubbedGamesResult ?? PaginatedResponse(count: 0, next: nil, previous: nil, results: [])
+        return stubbedGamesResult ?? PaginatedEntity(
+            count: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            results: []
+        )
     }
 
-    func getGameDetail(_ input: GameDetailInput) async throws -> GameDetail {
+    public func getGameDetail(_ input: GameDetailInput) async throws -> GameDetailEntity {
         getGameDetailCallCount += 1
         lastGameDetailInput = input
 
@@ -36,13 +43,17 @@ final class MockGamesRepository: GamesRepositoryProtocol, @unchecked Sendable {
         }
 
         guard let result = stubbedGameDetailResult else {
-            throw NSError(domain: "MockGamesRepository", code: 1, userInfo: [NSLocalizedDescriptionKey: "No stubbed result"])
+            throw NSError(
+                domain: "MockGamesRepository",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "No stubbed result"]
+            )
         }
 
         return result
     }
 
-    func searchGames(_ input: SearchGamesInput) async throws -> PaginatedResponse<Game> {
+    public func searchGames(_ input: SearchGamesInput) async throws -> PaginatedEntity<GameEntity> {
         searchGamesCallCount += 1
         lastSearchInput = input
 
@@ -50,6 +61,11 @@ final class MockGamesRepository: GamesRepositoryProtocol, @unchecked Sendable {
             throw error
         }
 
-        return stubbedSearchResult ?? PaginatedResponse(count: 0, next: nil, previous: nil, results: [])
+        return stubbedSearchResult ?? PaginatedEntity(
+            count: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            results: []
+        )
     }
 }

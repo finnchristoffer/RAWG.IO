@@ -1,66 +1,31 @@
 import Foundation
 
-/// Detailed game information from RAWG API.
-///
-/// Contains extended information for game detail views.
-public struct GameDetail: Decodable, Sendable, Identifiable, Equatable {
-    /// Unique identifier.
+/// Data Transfer Object for GameDetail from RAWG API.
+public struct GameDetailDTO: Decodable, Sendable {
     public let id: Int
-
-    /// URL slug for the game.
     public let slug: String
-
-    /// Display name.
     public let name: String
-
-    /// Full description in HTML format.
+    public let nameOriginal: String?
     public let description: String?
-
-    /// Plain text description.
     public let descriptionRaw: String?
-
-    /// Release date in "YYYY-MM-DD" format.
     public let released: String?
-
-    /// Background image URL.
     public let backgroundImage: String?
-
-    /// Additional background image URL.
     public let backgroundImageAdditional: String?
-
-    /// Official website URL.
     public let website: String?
-
-    /// Average rating (0-5 scale).
     public let rating: Double
-
-    /// Total number of ratings.
     public let ratingsCount: Int
-
-    /// Metacritic score (0-100).
     public let metacritic: Int?
-
-    /// Approximate playtime in hours.
     public let playtime: Int
-
-    /// List of platforms.
-    public let platforms: [PlatformWrapper]?
-
-    /// List of genres.
-    public let genres: [Genre]?
-
-    /// List of developers.
-    public let developers: [Developer]?
-
-    /// List of publishers.
-    public let publishers: [Publisher]?
-
-    // MARK: - Coding Keys
+    public let platforms: [PlatformWrapperDTO]?
+    public let genres: [GenreDTO]?
+    public let developers: [DeveloperDTO]?
+    public let publishers: [PublisherDTO]?
 
     private enum CodingKeys: String, CodingKey {
         case id
         case slug
         case name
+        case nameOriginal = "name_original"
         case description
         case descriptionRaw = "description_raw"
         case released
@@ -78,17 +43,15 @@ public struct GameDetail: Decodable, Sendable, Identifiable, Equatable {
     }
 }
 
-// MARK: - Supporting Types
+// MARK: - Supporting DTOs
 
-/// Developer information.
-public struct Developer: Decodable, Sendable, Equatable, Identifiable {
+public struct DeveloperDTO: Decodable, Sendable {
     public let id: Int
     public let name: String
     public let slug: String
 }
 
-/// Publisher information.
-public struct Publisher: Decodable, Sendable, Equatable, Identifiable {
+public struct PublisherDTO: Decodable, Sendable {
     public let id: Int
     public let name: String
     public let slug: String

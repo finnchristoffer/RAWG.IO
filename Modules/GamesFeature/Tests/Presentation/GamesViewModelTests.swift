@@ -23,20 +23,18 @@ final class GamesViewModelTests: XCTestCase {
     func test_loadGames_setsLoadingTrue() async {
         // Arrange
         let (sut, repository) = makeSUT()
-        repository.stubbedGamesResult = makeSuccessResponse(games: [makeGame(id: 1)])
+        repository.stubbedGamesResult = makeSuccessResponse(games: [makeGameEntity(id: 1)])
 
         // Act
-        async let loadTask: () = sut.loadGames()
+        await sut.loadGames()
 
-        // Assert - loading should be true during fetch
-        try? await Task.sleep(nanoseconds: 10_000_000) // 10ms
-        await loadTask
-        XCTAssertFalse(sut.isLoading) // Should be false after completion
+        // Assert - after completion, loading should be false
+        XCTAssertFalse(sut.isLoading)
     }
 
     func test_loadGames_populatesGamesOnSuccess() async {
         // Arrange
-        let expectedGames = [makeGame(id: 1), makeGame(id: 2)]
+        let expectedGames = [makeGameEntity(id: 1), makeGameEntity(id: 2)]
         let (sut, repository) = makeSUT()
         repository.stubbedGamesResult = makeSuccessResponse(games: expectedGames)
 
@@ -67,7 +65,7 @@ final class GamesViewModelTests: XCTestCase {
     func test_loadGames_setsHasMorePagesBasedOnResponse() async {
         // Arrange
         let (sut, repository) = makeSUT()
-        repository.stubbedGamesResult = makeSuccessResponse(games: [makeGame()], hasNext: false)
+        repository.stubbedGamesResult = makeSuccessResponse(games: [makeGameEntity()], hasNext: false)
 
         // Act
         await sut.loadGames()
@@ -80,8 +78,8 @@ final class GamesViewModelTests: XCTestCase {
 
     func test_loadMoreIfNeeded_loadsNextPageWhenNearEnd() async {
         // Arrange
-        let initialGames = (1...10).map { makeGame(id: $0) }
-        let nextPageGames = [makeGame(id: 11), makeGame(id: 12)]
+        let initialGames = (1...10).map { makeGameEntity(id: $0) }
+        let nextPageGames = [makeGameEntity(id: 11), makeGameEntity(id: 12)]
         let (sut, repository) = makeSUT()
 
         // Setup initial state
@@ -103,11 +101,11 @@ final class GamesViewModelTests: XCTestCase {
     func test_refresh_reloadsGames() async {
         // Arrange
         let (sut, repository) = makeSUT()
-        repository.stubbedGamesResult = makeSuccessResponse(games: [makeGame(id: 1)])
+        repository.stubbedGamesResult = makeSuccessResponse(games: [makeGameEntity(id: 1)])
         await sut.loadGames()
 
         // Change response for refresh
-        repository.stubbedGamesResult = makeSuccessResponse(games: [makeGame(id: 2)])
+        repository.stubbedGamesResult = makeSuccessResponse(games: [makeGameEntity(id: 2)])
 
         // Act
         await sut.refresh()
@@ -124,13 +122,14 @@ final class GamesViewModelTests: XCTestCase {
         line: UInt = #line
     ) -> (sut: GamesViewModel, repository: MockGamesRepository) {
         let repository = MockGamesRepository()
-        let sut = GamesViewModel(repository: repository)
+        let useCase = GetGamesUseCase(repository: repository)
+        let sut = GamesViewModel(getGamesUseCase: useCase)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, repository)
     }
 
-    private func makeGame(id: Int = 1) -> Game {
-        Game(
+    private func makeGameEntity(id: Int = 1) -> GameEntity {
+        GameEntity(
             id: id,
             slug: "game-\(id)",
             name: "Game \(id)",
@@ -140,19 +139,19 @@ final class GamesViewModelTests: XCTestCase {
             ratingsCount: 100,
             metacritic: nil,
             playtime: 10,
-            platforms: nil,
-            genres: nil
+            platforms: [],
+            genres: []
         )
     }
 
     private func makeSuccessResponse(
-        games: [Game],
+        games: [GameEntity],
         hasNext: Bool = true
-    ) -> PaginatedResponse<Game> {
-        PaginatedResponse(
+    ) -> PaginatedEntity<GameEntity> {
+        PaginatedEntity(
             count: games.count,
-            next: hasNext ? "https://api.rawg.io/api/games?page=2" : nil,
-            previous: nil,
+            hasNextPage: hasNext,
+            hasPreviousPage: false,
             results: games
         )
     }

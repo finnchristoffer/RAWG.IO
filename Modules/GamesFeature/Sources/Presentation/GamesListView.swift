@@ -50,12 +50,12 @@ public struct GamesListView: View {
     private var gamesList: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
-                ForEach(viewModel.games, id: \.id) { game in
+                ForEach(viewModel.games) { game in
                     GameCard(
                         title: game.name,
-                        imageURL: game.backgroundImage.flatMap { URL(string: $0) },
+                        imageURL: game.backgroundImage,
                         rating: game.rating,
-                        platforms: game.platforms?.compactMap { $0.platform.name } ?? []
+                        platforms: game.platforms.map { $0.name }
                     )
                     .onAppear {
                         Task {
@@ -78,7 +78,6 @@ public struct GamesListView: View {
 
 #if DEBUG
 #Preview {
-    // Preview with mock data would go here
     Text("GamesListView Preview")
 }
 #endif

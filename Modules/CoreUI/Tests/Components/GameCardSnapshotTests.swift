@@ -4,13 +4,8 @@ import SnapshotTesting
 @testable import CoreUI
 
 /// Snapshot tests for GameCard.
+@MainActor
 final class GameCardSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        // Uncomment to record new snapshots
-        // isRecording = true
-    }
-
     func test_gameCard_with_high_rating() {
         // Arrange
         let sut = makeSUT(

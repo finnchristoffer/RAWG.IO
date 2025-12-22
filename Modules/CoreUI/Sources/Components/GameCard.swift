@@ -89,17 +89,17 @@ public struct GameCard: View {
     private func platformIcon(for platform: String) -> some View {
         let iconName: String
         switch platform.lowercased() {
-        case let p where p.contains("pc") || p.contains("windows"):
+        case let platform where platform.contains("pc") || platform.contains("windows"):
             iconName = "desktopcomputer"
-        case let p where p.contains("playstation"):
+        case let platform where platform.contains("playstation"):
             iconName = "gamecontroller"
-        case let p where p.contains("xbox"):
+        case let platform where platform.contains("xbox"):
             iconName = "xmark.circle"
-        case let p where p.contains("nintendo") || p.contains("switch"):
+        case let platform where platform.contains("nintendo") || platform.contains("switch"):
             iconName = "gamecontroller.fill"
-        case let p where p.contains("ios") || p.contains("iphone"):
+        case let platform where platform.contains("ios") || platform.contains("iphone"):
             iconName = "iphone"
-        case let p where p.contains("mac"):
+        case let platform where platform.contains("mac"):
             iconName = "laptopcomputer"
         default:
             iconName = "gamecontroller"

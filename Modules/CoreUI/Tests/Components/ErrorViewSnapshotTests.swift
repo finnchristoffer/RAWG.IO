@@ -4,13 +4,8 @@ import SnapshotTesting
 @testable import CoreUI
 
 /// Snapshot tests for ErrorView.
+@MainActor
 final class ErrorViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        // Uncomment to record new snapshots
-        // isRecording = true
-    }
-
     func test_errorView_without_retry() {
         // Arrange
         let sut = makeSUT(message: "An error occurred", hasRetry: false)

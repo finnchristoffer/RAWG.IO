@@ -9,7 +9,7 @@ struct RootView: View {
 
     var body: some View {
         TabView(selection: $coordinator.selectedTab) {
-            gamesNavigator.rootView()
+            gamesNavigator.navigateToGameList()
                 .tabItem {
                     Label("Games", systemImage: "gamecontroller")
                 }

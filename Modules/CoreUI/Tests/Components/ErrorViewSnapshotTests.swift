@@ -4,7 +4,6 @@ import SnapshotTesting
 @testable import CoreUI
 
 /// Snapshot tests for ErrorView.
-@MainActor
 final class ErrorViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()

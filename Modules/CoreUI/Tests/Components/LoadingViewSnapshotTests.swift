@@ -4,7 +4,6 @@ import SnapshotTesting
 @testable import CoreUI
 
 /// Snapshot tests for LoadingView.
-@MainActor
 final class LoadingViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()

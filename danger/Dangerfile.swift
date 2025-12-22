@@ -98,8 +98,9 @@ for sourceFile in createdFiles where isSourceFile(sourceFile) {
 }
 
 // MARK: - Swift Best Practices
-// Check for force unwraps in new/modified files
-for file in changedSourceFiles {
+// Check for force unwraps in new/modified files (excluding deleted files)
+let existingChangedSourceFiles = changedSourceFiles.filter { !deletedFiles.contains($0) }
+for file in existingChangedSourceFiles {
     let fileContent = danger.utils.readFile(file)
     
     if fileContent.contains("!") {

@@ -37,6 +37,34 @@ public struct Game: Decodable, Sendable, Identifiable, Equatable {
     /// List of genres.
     public let genres: [Genre]?
 
+    // MARK: - Init
+
+    public init(
+        id: Int,
+        slug: String,
+        name: String,
+        released: String?,
+        backgroundImage: String?,
+        rating: Double,
+        ratingsCount: Int,
+        metacritic: Int?,
+        playtime: Int,
+        platforms: [PlatformWrapper]?,
+        genres: [Genre]?
+    ) {
+        self.id = id
+        self.slug = slug
+        self.name = name
+        self.released = released
+        self.backgroundImage = backgroundImage
+        self.rating = rating
+        self.ratingsCount = ratingsCount
+        self.metacritic = metacritic
+        self.playtime = playtime
+        self.platforms = platforms
+        self.genres = genres
+    }
+
     // MARK: - Coding Keys
 
     private enum CodingKeys: String, CodingKey {
@@ -59,6 +87,10 @@ public struct Game: Decodable, Sendable, Identifiable, Equatable {
 /// Wrapper for platform information.
 public struct PlatformWrapper: Decodable, Sendable, Equatable {
     public let platform: Platform
+
+    public init(platform: Platform) {
+        self.platform = platform
+    }
 }
 
 /// Platform information.
@@ -66,6 +98,12 @@ public struct Platform: Decodable, Sendable, Equatable, Identifiable {
     public let id: Int
     public let name: String
     public let slug: String
+
+    public init(id: Int, name: String, slug: String) {
+        self.id = id
+        self.name = name
+        self.slug = slug
+    }
 }
 
 /// Genre information.
@@ -73,4 +111,10 @@ public struct Genre: Decodable, Sendable, Equatable, Identifiable {
     public let id: Int
     public let name: String
     public let slug: String
+
+    public init(id: Int, name: String, slug: String) {
+        self.id = id
+        self.name = name
+        self.slug = slug
+    }
 }

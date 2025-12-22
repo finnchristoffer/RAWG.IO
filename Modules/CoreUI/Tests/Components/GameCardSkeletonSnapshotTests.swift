@@ -14,7 +14,7 @@ final class GameCardSkeletonSnapshotTests: XCTestCase {
             .background(ColorTokens.background)
 
         // Assert
-        assertSnapshot(of: sut, as: .image)
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 
     func test_gameCardSkeleton_list() {
@@ -29,6 +29,6 @@ final class GameCardSkeletonSnapshotTests: XCTestCase {
         .background(ColorTokens.background)
 
         // Assert
-        assertSnapshot(of: sut, as: .image)
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 }

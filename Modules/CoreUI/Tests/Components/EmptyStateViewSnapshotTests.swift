@@ -12,7 +12,7 @@ final class EmptyStateViewSnapshotTests: XCTestCase {
             .frame(width: 390, height: 400)
 
         // Assert
-        assertSnapshot(of: sut, as: .image)
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 
     func test_emptyStateView_with_custom_content() {
@@ -25,7 +25,7 @@ final class EmptyStateViewSnapshotTests: XCTestCase {
         .frame(width: 390, height: 400)
 
         // Assert
-        assertSnapshot(of: sut, as: .image)
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 
     func test_emptyStateView_with_action_button() {
@@ -41,6 +41,6 @@ final class EmptyStateViewSnapshotTests: XCTestCase {
         .frame(width: 390, height: 400)
 
         // Assert
-        assertSnapshot(of: sut, as: .image)
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 }

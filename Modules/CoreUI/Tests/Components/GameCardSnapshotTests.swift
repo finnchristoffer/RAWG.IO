@@ -15,7 +15,7 @@ final class GameCardSnapshotTests: XCTestCase {
         )
 
         // Assert
-        assertSnapshot(of: sut, as: .image(layout: .fixed(width: 350, height: 280)))
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 
     func test_gameCard_with_low_rating() {
@@ -27,7 +27,7 @@ final class GameCardSnapshotTests: XCTestCase {
         )
 
         // Assert
-        assertSnapshot(of: sut, as: .image(layout: .fixed(width: 350, height: 280)))
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 
     func test_gameCard_with_long_title() {
@@ -39,7 +39,7 @@ final class GameCardSnapshotTests: XCTestCase {
         )
 
         // Assert
-        assertSnapshot(of: sut, as: .image(layout: .fixed(width: 350, height: 280)))
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 
     func test_gameCard_without_platforms() {
@@ -51,7 +51,7 @@ final class GameCardSnapshotTests: XCTestCase {
         )
 
         // Assert
-        assertSnapshot(of: sut, as: .image(layout: .fixed(width: 350, height: 280)))
+        assertSnapshot(of: sut, as: .image(layout: .device(config: .iPhone13)))
     }
 
     // MARK: - Helpers
@@ -70,6 +70,7 @@ final class GameCardSnapshotTests: XCTestCase {
             rating: rating,
             platforms: platforms
         )
+        .frame(width: 350, height: 280)
         .padding()
         .background(ColorTokens.background)
     }

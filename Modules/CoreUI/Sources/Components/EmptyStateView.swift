@@ -69,6 +69,6 @@ public struct EmptyStateView: View {
         systemImage: "gamecontroller",
         actionTitle: "Refresh"
     ) {
-        print("Refresh tapped")
+        // Refresh action
     }
 }

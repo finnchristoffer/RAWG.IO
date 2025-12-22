@@ -6,13 +6,6 @@ import SnapshotTesting
 /// Snapshot tests for GameCardSkeleton.
 @MainActor
 final class GameCardSkeletonSnapshotTests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        // Uncomment to record new snapshots
-        // isRecording = true
-    }
-
     func test_gameCardSkeleton_default() {
         // Arrange
         let sut = GameCardSkeleton()

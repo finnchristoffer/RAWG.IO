@@ -61,9 +61,8 @@ public struct ErrorView: View {
 
 #if DEBUG
 #Preview {
-    ErrorView(
-        message: "Failed to load games. Please check your connection.",
-        retryAction: {}
-    )
+    ErrorView(message: "Failed to load games. Please check your connection.") {
+        // Retry action
+    }
 }
 #endif

@@ -6,13 +6,6 @@ import SnapshotTesting
 /// Snapshot tests for EmptyStateView.
 @MainActor
 final class EmptyStateViewSnapshotTests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-        // Uncomment to record new snapshots
-        // isRecording = true
-    }
-
     func test_emptyStateView_default() {
         // Arrange
         let sut = EmptyStateView()

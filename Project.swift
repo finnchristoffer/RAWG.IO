@@ -233,7 +233,7 @@ let project = Project(
             dependencies: [
                 .target(name: "RAWGApp")
             ]
-        ),
+        )
     ],
     schemes: [
         .scheme(
@@ -243,6 +243,7 @@ let project = Project(
             testAction: .targets(
                 [
                     "CoreTests",
+                    "CommonTests",
                     "CoreUITests",
                     "CoreNetworkTests",
                     "GamesFeatureTests",

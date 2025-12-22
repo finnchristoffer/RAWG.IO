@@ -5,7 +5,7 @@ import XCTest
 final class GameTests: XCTestCase {
     func test_game_decodes_from_valid_json() throws {
         // Arrange
-        let json = """
+        let json = Data("""
         {
             "id": 1,
             "slug": "test-game",
@@ -23,7 +23,7 @@ final class GameTests: XCTestCase {
                 {"id": 1, "name": "Action", "slug": "action"}
             ]
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
         // Act
         let sut = try JSONDecoder().decode(Game.self, from: json)
@@ -39,7 +39,7 @@ final class GameTests: XCTestCase {
 
     func test_game_decodes_with_missing_optional_fields() throws {
         // Arrange
-        let json = """
+        let json = Data("""
         {
             "id": 1,
             "slug": "test",
@@ -53,7 +53,7 @@ final class GameTests: XCTestCase {
             "platforms": null,
             "genres": null
         }
-        """.data(using: .utf8)!
+        """.utf8)
 
         // Act
         let sut = try JSONDecoder().decode(Game.self, from: json)

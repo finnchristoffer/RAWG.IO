@@ -1,19 +1,21 @@
 import SwiftUI
+import Common
+import CoreNetwork
+import GamesFeature
 
 struct RootView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
-    
+
     var body: some View {
         TabView(selection: $coordinator.selectedTab) {
             NavigationStack(path: $coordinator.gamesPath) {
-                Text("Games")
-                    .navigationTitle("Games")
+                GamesListView(viewModel: makeGamesViewModel())
             }
             .tabItem {
                 Label("Games", systemImage: "gamecontroller")
             }
             .tag(AppCoordinator.Tab.games)
-            
+
             NavigationStack(path: $coordinator.searchPath) {
                 Text("Search")
                     .navigationTitle("Search")
@@ -22,7 +24,7 @@ struct RootView: View {
                 Label("Search", systemImage: "magnifyingglass")
             }
             .tag(AppCoordinator.Tab.search)
-            
+
             NavigationStack(path: $coordinator.favoritesPath) {
                 Text("Favorites")
                     .navigationTitle("Favorites")
@@ -32,6 +34,16 @@ struct RootView: View {
             }
             .tag(AppCoordinator.Tab.favorites)
         }
+    }
+
+    // MARK: - Factory
+
+    private func makeGamesViewModel() -> GamesViewModel {
+        let client = APIClient(
+            baseURL: URL(string: "https://api.rawg.io/api")!
+        )
+        let repository = GamesRepository(client: client)
+        return GamesViewModel(repository: repository)
     }
 }
 

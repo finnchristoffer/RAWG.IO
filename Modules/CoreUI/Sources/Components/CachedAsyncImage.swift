@@ -50,13 +50,24 @@ public struct GameImageView: View {
             case .success(let image):
                 image.resizable()
             case .failure:
-                Image(systemName: "photo")
-                    .resizable()
-                    .foregroundColor(ColorTokens.textSecondary)
+                ZStack {
+                    ColorTokens.backgroundSecondary
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 40, height: 40)
+                        .foregroundColor(ColorTokens.textSecondary)
+                }
             case .empty:
-                ProgressView()
+                ZStack {
+                    ColorTokens.backgroundSecondary
+                    ProgressView()
+                }
             @unknown default:
-                ProgressView()
+                ZStack {
+                    ColorTokens.backgroundSecondary
+                    ProgressView()
+                }
             }
         }
     }

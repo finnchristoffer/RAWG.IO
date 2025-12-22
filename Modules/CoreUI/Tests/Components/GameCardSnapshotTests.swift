@@ -9,7 +9,7 @@ final class GameCardSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Uncomment to record new snapshots
-//         isRecording = true
+        // isRecording = true
     }
 
     func test_gameCard_with_high_rating() {

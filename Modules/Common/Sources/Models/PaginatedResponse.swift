@@ -19,4 +19,13 @@ public struct PaginatedResponse<T: Decodable & Sendable>: Decodable, Sendable {
 
     /// Array of results for the current page.
     public let results: [T]
+
+    // MARK: - Init
+
+    public init(count: Int, next: String?, previous: String?, results: [T]) {
+        self.count = count
+        self.next = next
+        self.previous = previous
+        self.results = results
+    }
 }

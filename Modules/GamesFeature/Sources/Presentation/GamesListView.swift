@@ -3,14 +3,14 @@ import Common
 import CoreUI
 
 /// Main view for displaying the list of games.
-public struct GamesListView: View {
+struct GamesListView: View {
     @StateObject private var viewModel: GamesViewModel
 
-    public init(viewModel: GamesViewModel) {
+    init(viewModel: GamesViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
-    public var body: some View {
+    var body: some View {
         NavigationStack {
             content
                 .navigationTitle("Games")

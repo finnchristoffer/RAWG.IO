@@ -1,20 +1,19 @@
 import SwiftUI
-import Factory
 import GamesFeature
 
 struct RootView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
-    @Injected(\.gamesViewModel) private var gamesViewModel
+
+    // Use navigator pattern - module exposes only entry point
+    private let gamesNavigator = GamesNavigator()
 
     var body: some View {
         TabView(selection: $coordinator.selectedTab) {
-            NavigationStack(path: $coordinator.gamesPath) {
-                GamesListView(viewModel: gamesViewModel)
-            }
-            .tabItem {
-                Label("Games", systemImage: "gamecontroller")
-            }
-            .tag(AppCoordinator.Tab.games)
+            gamesNavigator.rootView()
+                .tabItem {
+                    Label("Games", systemImage: "gamecontroller")
+                }
+                .tag(AppCoordinator.Tab.games)
 
             NavigationStack(path: $coordinator.searchPath) {
                 Text("Search")

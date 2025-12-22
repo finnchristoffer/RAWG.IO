@@ -1,16 +1,17 @@
 import SwiftUI
 import Combine
 import Common
+import Factory
 
 /// ViewModel for the Games list screen.
 @MainActor
-public final class GamesViewModel: ObservableObject {
+final class GamesViewModel: ObservableObject {
     // MARK: - Published State
 
-    @Published public private(set) var games: [GameEntity] = []
-    @Published public private(set) var isLoading = false
-    @Published public private(set) var error: Error?
-    @Published public private(set) var hasMorePages = true
+    @Published private(set) var games: [GameEntity] = []
+    @Published private(set) var isLoading = false
+    @Published private(set) var error: Error?
+    @Published private(set) var hasMorePages = true
 
     // MARK: - Private
 
@@ -18,16 +19,16 @@ public final class GamesViewModel: ObservableObject {
     private var currentPage = 1
     private var isLoadingMore = false
 
-    // MARK: - Init
+    // MARK: - UseCase
 
-    public nonisolated init(getGamesUseCase: GetGamesUseCase) {
+    nonisolated init(getGamesUseCase: GetGamesUseCase) {
         self.getGamesUseCase = getGamesUseCase
     }
 
-    // MARK: - Public Methods
+    // MARK: -  Methods
 
     /// Load the initial page of games.
-    public func loadGames() async {
+    func loadGames() async {
         guard !isLoading else { return }
 
         isLoading = true
@@ -48,7 +49,7 @@ public final class GamesViewModel: ObservableObject {
     }
 
     /// Load the next page of games (pagination).
-    public func loadMoreIfNeeded(currentItem: GameEntity?) async {
+     func loadMoreIfNeeded(currentItem: GameEntity?) async {
         guard let currentItem else { return }
         guard !isLoadingMore, hasMorePages else { return }
 
@@ -77,7 +78,7 @@ public final class GamesViewModel: ObservableObject {
     }
 
     /// Refresh the games list (pull-to-refresh).
-    public func refresh() async {
+     func refresh() async {
         await loadGames()
     }
 }

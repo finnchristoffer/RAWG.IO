@@ -254,27 +254,6 @@ let project = Project(
             ),
             runAction: .runAction(configuration: "Debug"),
             archiveAction: .archiveAction(configuration: "Release")
-        ),
-        .scheme(
-            name: "CoreUI",
-            shared: true,
-            buildAction: .buildAction(targets: ["CoreUI"]),
-            testAction: .targets(["CoreUITests"]),
-            runAction: .runAction(configuration: "Debug")
-        ),
-        .scheme(
-            name: "GamesFeature",
-            shared: true,
-            buildAction: .buildAction(targets: ["GamesFeature"]),
-            testAction: .targets(["GamesFeatureTests"]),
-            runAction: .runAction(configuration: "Debug")
-        ),
-        .scheme(
-            name: "Common",
-            shared: true,
-            buildAction: .buildAction(targets: ["Common"]),
-            testAction: .targets(["CommonTests"]),
-            runAction: .runAction(configuration: "Debug")
         )
     ]
 )

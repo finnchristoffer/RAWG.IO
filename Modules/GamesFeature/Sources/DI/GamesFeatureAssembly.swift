@@ -4,8 +4,8 @@ import Common
 
 // MARK: - GamesFeature Module DI Assembly
 
-public extension Container {
-    // MARK: - UseCases
+extension Container {
+    // MARK: - UseCases (internal)
 
     /// GetGamesUseCase for fetching games list.
     var getGamesUseCase: Factory<GetGamesUseCase> {
@@ -17,9 +17,10 @@ public extension Container {
         self { GetGameDetailUseCase(repository: self.gamesRepository()) }
     }
 
-    // MARK: - ViewModels
+    // MARK: - ViewModels (internal)
 
     /// GamesViewModel for games list screen.
+    @MainActor
     var gamesViewModel: Factory<GamesViewModel> {
         self { GamesViewModel(getGamesUseCase: self.getGamesUseCase()) }
     }

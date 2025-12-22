@@ -4,13 +4,8 @@ import SnapshotTesting
 @testable import CoreUI
 
 /// Snapshot tests for LoadingView.
+@MainActor
 final class LoadingViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        // Uncomment to record new snapshots
-        // isRecording = true
-    }
-
     func test_loadingView_without_message() {
         // Arrange
         let sut = makeSUT(message: nil)

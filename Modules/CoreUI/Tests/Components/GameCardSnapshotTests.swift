@@ -4,7 +4,6 @@ import SnapshotTesting
 @testable import CoreUI
 
 /// Snapshot tests for GameCard.
-@MainActor
 final class GameCardSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()

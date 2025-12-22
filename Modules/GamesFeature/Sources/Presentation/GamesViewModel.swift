@@ -3,30 +3,30 @@ import Combine
 import Common
 
 /// ViewModel for the Games list screen.
-@MainActor
 public final class GamesViewModel: ObservableObject {
     // MARK: - Published State
 
-    @Published public private(set) var games: [Game] = []
-    @Published public private(set) var isLoading = false
-    @Published public private(set) var error: Error?
-    @Published public private(set) var hasMorePages = true
+    @MainActor @Published public private(set) var games: [GameEntity] = []
+    @MainActor @Published public private(set) var isLoading = false
+    @MainActor @Published public private(set) var error: Error?
+    @MainActor @Published public private(set) var hasMorePages = true
 
     // MARK: - Private
 
-    private let repository: GamesRepositoryProtocol
+    private let getGamesUseCase: GetGamesUseCase
     private var currentPage = 1
     private var isLoadingMore = false
 
     // MARK: - Init
 
-    public init(repository: GamesRepositoryProtocol) {
-        self.repository = repository
+    public init(getGamesUseCase: GetGamesUseCase) {
+        self.getGamesUseCase = getGamesUseCase
     }
 
     // MARK: - Public Methods
 
     /// Load the initial page of games.
+    @MainActor
     public func loadGames() async {
         guard !isLoading else { return }
 
@@ -36,9 +36,9 @@ public final class GamesViewModel: ObservableObject {
 
         do {
             let input = GamesInput(page: 1)
-            let response = try await repository.getGames(input)
+            let response = try await getGamesUseCase.execute(input)
             games = response.results
-            hasMorePages = response.next != nil
+            hasMorePages = response.hasNextPage
             currentPage = 1
         } catch {
             self.error = error
@@ -48,7 +48,8 @@ public final class GamesViewModel: ObservableObject {
     }
 
     /// Load the next page of games (pagination).
-    public func loadMoreIfNeeded(currentItem: Game?) async {
+    @MainActor
+    public func loadMoreIfNeeded(currentItem: GameEntity?) async {
         guard let currentItem else { return }
         guard !isLoadingMore, hasMorePages else { return }
 
@@ -64,9 +65,9 @@ public final class GamesViewModel: ObservableObject {
         do {
             let nextPage = currentPage + 1
             let input = GamesInput(page: nextPage)
-            let response = try await repository.getGames(input)
+            let response = try await getGamesUseCase.execute(input)
             games.append(contentsOf: response.results)
-            hasMorePages = response.next != nil
+            hasMorePages = response.hasNextPage
             currentPage = nextPage
         } catch {
             // Silent fail for pagination errors
@@ -77,6 +78,7 @@ public final class GamesViewModel: ObservableObject {
     }
 
     /// Refresh the games list (pull-to-refresh).
+    @MainActor
     public func refresh() async {
         await loadGames()
     }

@@ -43,13 +43,14 @@ final class GamesListViewSnapshotTests: XCTestCase {
 
     private enum ViewState {
         case loading
-        case loaded(games: [Game])
+        case loaded(games: [GameEntity])
         case error(String)
     }
 
     private func makeSUT(state: ViewState) -> some View {
         let repository = MockGamesRepository()
-        let viewModel = GamesViewModel(repository: repository)
+        let useCase = GetGamesUseCase(repository: repository)
+        let viewModel = GamesViewModel(getGamesUseCase: useCase)
 
         // Configure state
         switch state {
@@ -57,10 +58,10 @@ final class GamesListViewSnapshotTests: XCTestCase {
             // Default state is not loading until loadGames is called
             break
         case .loaded(let games):
-            repository.stubbedGamesResult = PaginatedResponse(
+            repository.stubbedGamesResult = PaginatedEntity(
                 count: games.count,
-                next: nil,
-                previous: nil,
+                hasNextPage: false,
+                hasPreviousPage: false,
                 results: games
             )
         case .error(let message):
@@ -75,9 +76,9 @@ final class GamesListViewSnapshotTests: XCTestCase {
             .frame(width: 390, height: 844)
     }
 
-    private func makeMockGames() -> [Game] {
+    private func makeMockGames() -> [GameEntity] {
         [
-            Game(
+            GameEntity(
                 id: 1,
                 slug: "witcher-3",
                 name: "The Witcher 3: Wild Hunt",
@@ -87,10 +88,10 @@ final class GamesListViewSnapshotTests: XCTestCase {
                 ratingsCount: 5000,
                 metacritic: 93,
                 playtime: 50,
-                platforms: nil,
-                genres: nil
+                platforms: [],
+                genres: []
             ),
-            Game(
+            GameEntity(
                 id: 2,
                 slug: "elden-ring",
                 name: "Elden Ring",
@@ -100,10 +101,10 @@ final class GamesListViewSnapshotTests: XCTestCase {
                 ratingsCount: 3000,
                 metacritic: 96,
                 playtime: 80,
-                platforms: nil,
-                genres: nil
+                platforms: [],
+                genres: []
             ),
-            Game(
+            GameEntity(
                 id: 3,
                 slug: "gta-5",
                 name: "Grand Theft Auto V",
@@ -113,8 +114,8 @@ final class GamesListViewSnapshotTests: XCTestCase {
                 ratingsCount: 8000,
                 metacritic: 97,
                 playtime: 100,
-                platforms: nil,
-                genres: nil
+                platforms: [],
+                genres: []
             )
         ]
     }

@@ -1,15 +1,15 @@
 import SwiftUI
-import Common
-import CoreNetwork
+import Factory
 import GamesFeature
 
 struct RootView: View {
     @EnvironmentObject private var coordinator: AppCoordinator
+    @Injected(\.gamesViewModel) private var gamesViewModel
 
     var body: some View {
         TabView(selection: $coordinator.selectedTab) {
             NavigationStack(path: $coordinator.gamesPath) {
-                GamesListView(viewModel: makeGamesViewModel())
+                GamesListView(viewModel: gamesViewModel)
             }
             .tabItem {
                 Label("Games", systemImage: "gamecontroller")
@@ -34,16 +34,6 @@ struct RootView: View {
             }
             .tag(AppCoordinator.Tab.favorites)
         }
-    }
-
-    // MARK: - Factory
-
-    private func makeGamesViewModel() -> GamesViewModel {
-        let client = APIClient(
-            baseURL: URL(string: "https://api.rawg.io/api")!
-        )
-        let repository = GamesRepository(client: client)
-        return GamesViewModel(repository: repository)
     }
 }
 

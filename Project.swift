@@ -119,6 +119,31 @@ let project = Project(
             ]
         ),
         
+        // MARK: - Common Module (App-Specific Shared)
+        .target(
+            name: "Common",
+            destinations: destinations,
+            product: .staticFramework,
+            bundleId: "\(bundleIdPrefix).common",
+            deploymentTargets: deploymentTargets,
+            sources: ["Modules/Common/Sources/**"],
+            dependencies: [
+                .target(name: "Core"),
+                .target(name: "CoreNetwork")
+            ]
+        ),
+        .target(
+            name: "CommonTests",
+            destinations: destinations,
+            product: .unitTests,
+            bundleId: "\(bundleIdPrefix).common.tests",
+            deploymentTargets: deploymentTargets,
+            sources: ["Modules/Common/Tests/**"],
+            dependencies: [
+                .target(name: "Common")
+            ]
+        ),
+        
         // MARK: - Games Feature
         .target(
             name: "GamesFeature",
@@ -128,9 +153,8 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/GamesFeature/Sources/**"],
             dependencies: [
-                .target(name: "Core"),
-                .target(name: "CoreUI"),
-                .target(name: "CoreNetwork")
+                .target(name: "Common"),
+                .target(name: "CoreUI")
             ]
         ),
         .target(
@@ -155,9 +179,8 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/SearchFeature/Sources/**"],
             dependencies: [
-                .target(name: "Core"),
-                .target(name: "CoreUI"),
-                .target(name: "CoreNetwork")
+                .target(name: "Common"),
+                .target(name: "CoreUI")
             ]
         ),
         .target(
@@ -182,9 +205,8 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/FavoritesFeature/Sources/**"],
             dependencies: [
-                .target(name: "Core"),
-                .target(name: "CoreUI"),
-                .target(name: "CoreNetwork")
+                .target(name: "Common"),
+                .target(name: "CoreUI")
             ]
         ),
         .target(

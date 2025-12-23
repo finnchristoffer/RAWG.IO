@@ -1,23 +1,23 @@
 import SwiftUI
 import Common
 import CoreUI
+import CoreNavigation
 
 /// View displaying favorite games.
 struct FavoritesView: View {
     @StateObject private var viewModel: FavoritesViewModel
+    @EnvironmentObject private var router: NavigationRouter
 
     init(viewModel: FavoritesViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle("Favorites")
-                .task {
-                    await viewModel.loadFavorites()
-                }
-        }
+        content
+            .navigationTitle("Favorites")
+            .task {
+                await viewModel.loadFavorites()
+            }
     }
 
     // MARK: - Content
@@ -80,6 +80,9 @@ struct FavoritesView: View {
                         rating: game.rating,
                         platforms: game.platforms.map { $0.name }
                     )
+                    .onTapGesture {
+                        router.navigate(to: AppRoute.gameDetail(gameId: game.id, name: game.name))
+                    }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             Task {

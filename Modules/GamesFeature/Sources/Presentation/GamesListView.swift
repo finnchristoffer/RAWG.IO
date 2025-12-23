@@ -1,28 +1,28 @@
 import SwiftUI
 import Common
 import CoreUI
+import CoreNavigation
 
 /// Main view for displaying the list of games.
 struct GamesListView: View {
     @StateObject private var viewModel: GamesViewModel
+    @EnvironmentObject private var router: NavigationRouter
 
     init(viewModel: GamesViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle("Games")
-                .refreshable {
-                    await viewModel.refresh()
-                }
-        }
-        .task {
-            if viewModel.games.isEmpty {
-                await viewModel.loadGames()
+        content
+            .navigationTitle("Games")
+            .refreshable {
+                await viewModel.refresh()
             }
-        }
+            .task {
+                if viewModel.games.isEmpty {
+                    await viewModel.loadGames()
+                }
+            }
     }
 
     // MARK: - Content
@@ -85,6 +85,9 @@ struct GamesListView: View {
                         rating: game.rating,
                         platforms: game.platforms.map { $0.name }
                     )
+                    .onTapGesture {
+                        router.navigate(to: AppRoute.gameDetail(gameId: game.id, name: game.name))
+                    }
                     .onAppear {
                         Task {
                             await viewModel.loadMoreIfNeeded(currentItem: game)

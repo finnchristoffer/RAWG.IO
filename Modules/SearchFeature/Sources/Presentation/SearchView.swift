@@ -1,25 +1,25 @@
 import SwiftUI
 import Common
 import CoreUI
+import CoreNavigation
 
 /// Main view for game search.
 struct SearchView: View {
     @StateObject private var viewModel: SearchViewModel
+    @EnvironmentObject private var router: NavigationRouter
 
     init(viewModel: SearchViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle("Search")
-                .searchable(
-                    text: $viewModel.searchQuery,
-                    placement: .navigationBarDrawer(displayMode: .always),
-                    prompt: "Search games..."
-                )
-        }
+        content
+            .navigationTitle("Search")
+            .searchable(
+                text: $viewModel.searchQuery,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search games..."
+            )
     }
 
     // MARK: - Content
@@ -95,6 +95,9 @@ struct SearchView: View {
                         rating: game.rating,
                         platforms: game.platforms.map { $0.name }
                     )
+                    .onTapGesture {
+                        router.navigate(to: AppRoute.gameDetail(gameId: game.id, name: game.name))
+                    }
                     .onAppear {
                         Task {
                             await viewModel.loadMoreIfNeeded(currentItem: game)

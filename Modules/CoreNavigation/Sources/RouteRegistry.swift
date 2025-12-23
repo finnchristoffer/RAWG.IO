@@ -23,11 +23,11 @@ public final class RouteRegistry {
     public func resolve<R: RouteProtocol>(_ route: R) -> AnyRoute {
         let key = ObjectIdentifier(R.self)
         guard let resolver = resolvers[key] as? (R) -> AnyView else {
-            return AnyRoute(route: route, view: {
+            return AnyRoute(route: route) {
                 AnyView(Text("Route not registered: \(String(describing: route))"))
-            })
+            }
         }
         let view = resolver(route)
-        return AnyRoute(route: route, view: { view })
+        return AnyRoute(route: route) { view }
     }
 }

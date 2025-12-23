@@ -115,9 +115,9 @@ final class CoreNavigationTests: XCTestCase {
 
     func test_anyRoute_equality() {
         // Arrange
-        let route1 = AnyRoute(route: TestRoute.detail(id: 1), view: { AnyView(Text("A")) })
-        let route2 = AnyRoute(route: TestRoute.detail(id: 1), view: { AnyView(Text("B")) })
-        let route3 = AnyRoute(route: TestRoute.detail(id: 2), view: { AnyView(Text("A")) })
+        let route1 = AnyRoute(route: TestRoute.detail(id: 1)) { AnyView(Text("A")) }
+        let route2 = AnyRoute(route: TestRoute.detail(id: 1)) { AnyView(Text("B")) }
+        let route3 = AnyRoute(route: TestRoute.detail(id: 2)) { AnyView(Text("A")) }
 
         // Assert - equality based on route id, not view
         XCTAssertEqual(route1, route2)
@@ -126,8 +126,8 @@ final class CoreNavigationTests: XCTestCase {
 
     func test_anyRoute_hashable() {
         // Arrange
-        let route1 = AnyRoute(route: TestRoute.detail(id: 1), view: { AnyView(Text("A")) })
-        let route2 = AnyRoute(route: TestRoute.detail(id: 1), view: { AnyView(Text("B")) })
+        let route1 = AnyRoute(route: TestRoute.detail(id: 1)) { AnyView(Text("A")) }
+        let route2 = AnyRoute(route: TestRoute.detail(id: 1)) { AnyView(Text("B")) }
 
         // Assert - can be used in Set
         var set: Set<AnyRoute> = []

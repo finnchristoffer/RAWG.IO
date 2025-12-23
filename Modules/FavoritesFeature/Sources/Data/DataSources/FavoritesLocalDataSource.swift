@@ -2,10 +2,10 @@ import Foundation
 import SwiftData
 
 /// Local data source for favorites using SwiftData.
-public final class FavoritesLocalDataSource: @unchecked Sendable {
+public final class FavoritesLocalDataSource: FavoritesLocalDataSourceProtocol, @unchecked Sendable {
     private let modelContainer: ModelContainer
 
-    public init(modelContainer: ModelContainer) {
+    public nonisolated init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
     }
 

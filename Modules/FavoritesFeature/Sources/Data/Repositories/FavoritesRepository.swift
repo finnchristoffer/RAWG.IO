@@ -3,9 +3,9 @@ import Common
 
 /// Repository implementing favorites operations.
 public final class FavoritesRepository: FavoritesRepositoryProtocol, @unchecked Sendable {
-    private let localDataSource: FavoritesLocalDataSource
+    private let localDataSource: FavoritesLocalDataSourceProtocol
 
-    public init(localDataSource: FavoritesLocalDataSource) {
+    public init(localDataSource: FavoritesLocalDataSourceProtocol) {
         self.localDataSource = localDataSource
     }
 

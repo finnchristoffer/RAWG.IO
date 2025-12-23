@@ -293,12 +293,14 @@ let project = Project(
             testAction: .targets(
                 [
                     "CoreTests",
+                    "CoreNavigationTests",
                     "CommonTests",
                     "CoreUITests",
                     "CoreNetworkTests",
                     "GamesFeatureTests",
                     "SearchFeatureTests",
-                    "FavoritesFeatureTests"
+                    "FavoritesFeatureTests",
+                    "DetailFeatureTests"
                 ],
                 options: .options(coverage: true)
             ),

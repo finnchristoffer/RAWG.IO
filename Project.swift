@@ -41,7 +41,8 @@ let project = Project(
                 .target(name: "CoreNetwork"),
                 .target(name: "GamesFeature"),
                 .target(name: "SearchFeature"),
-                .target(name: "FavoritesFeature")
+                .target(name: "FavoritesFeature"),
+                .target(name: "DetailFeature")
             ]
         ),
         
@@ -66,6 +67,28 @@ let project = Project(
             sources: ["Modules/Core/Tests/**"],
             dependencies: [
                 .target(name: "Core")
+            ]
+        ),
+        
+        // MARK: - CoreNavigation Module
+        .target(
+            name: "CoreNavigation",
+            destinations: destinations,
+            product: .staticFramework,
+            bundleId: "\(bundleIdPrefix).corenavigation",
+            deploymentTargets: deploymentTargets,
+            sources: ["Modules/CoreNavigation/Sources/**"],
+            dependencies: []
+        ),
+        .target(
+            name: "CoreNavigationTests",
+            destinations: destinations,
+            product: .unitTests,
+            bundleId: "\(bundleIdPrefix).corenavigation.tests",
+            deploymentTargets: deploymentTargets,
+            sources: ["Modules/CoreNavigation/Tests/**"],
+            dependencies: [
+                .target(name: "CoreNavigation")
             ]
         ),
         
@@ -129,7 +152,8 @@ let project = Project(
             sources: ["Modules/Common/Sources/**"],
             dependencies: [
                 .target(name: "Core"),
-                .target(name: "CoreNetwork")
+                .target(name: "CoreNetwork"),
+                .target(name: "CoreNavigation")
             ]
         ),
         .target(
@@ -218,6 +242,32 @@ let project = Project(
             sources: ["Modules/FavoritesFeature/Tests/**"],
             dependencies: [
                 .target(name: "FavoritesFeature"),
+                .external(name: "SnapshotTesting")
+            ]
+        ),
+        
+        // MARK: - Detail Feature
+        .target(
+            name: "DetailFeature",
+            destinations: destinations,
+            product: .staticFramework,
+            bundleId: "\(bundleIdPrefix).features.detail",
+            deploymentTargets: deploymentTargets,
+            sources: ["Modules/DetailFeature/Sources/**"],
+            dependencies: [
+                .target(name: "Common"),
+                .target(name: "CoreUI")
+            ]
+        ),
+        .target(
+            name: "DetailFeatureTests",
+            destinations: destinations,
+            product: .unitTests,
+            bundleId: "\(bundleIdPrefix).features.detail.tests",
+            deploymentTargets: deploymentTargets,
+            sources: ["Modules/DetailFeature/Tests/**"],
+            dependencies: [
+                .target(name: "DetailFeature"),
                 .external(name: "SnapshotTesting")
             ]
         ),

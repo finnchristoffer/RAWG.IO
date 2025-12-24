@@ -119,13 +119,21 @@ public struct GameDetailView: View {
 
     // MARK: - Description Section
 
+    private var descriptionPlaceholder: String {
+        """
+        Game details will be loaded here. This is a placeholder for the \
+        game description that will include information about gameplay, \
+        story, and features.
+        """
+    }
+
     private var descriptionSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("About")
                 .font(Typography.headline)
                 .foregroundStyle(ColorTokens.textPrimary)
 
-            Text("Game details will be loaded here. This is a placeholder for the game description that will include information about gameplay, story, and features.")
+            Text(descriptionPlaceholder)
                 .font(Typography.body)
                 .foregroundStyle(ColorTokens.textSecondary)
                 .lineSpacing(4)

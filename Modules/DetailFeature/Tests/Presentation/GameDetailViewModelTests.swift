@@ -31,6 +31,31 @@ final class GameDetailViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.error)
     }
 
+    // MARK: - Image URL Tests
+
+    func test_init_withBackgroundImageURL_setsURL() {
+        // Arrange
+        let expectedURL = URL(string: "https://media.rawg.io/games/image.jpg")
+
+        // Act
+        let viewModel = GameDetailViewModel(
+            gameId: 1,
+            gameName: "Test",
+            backgroundImageURL: expectedURL
+        )
+
+        // Assert
+        XCTAssertEqual(viewModel.backgroundImageURL, expectedURL)
+    }
+
+    func test_init_withoutBackgroundImageURL_defaultsToNil() {
+        // Arrange & Act
+        let viewModel = GameDetailViewModel(gameId: 1, gameName: "Test")
+
+        // Assert
+        XCTAssertNil(viewModel.backgroundImageURL)
+    }
+
     // MARK: - Loading Tests
 
     func test_loadDetails_setsLoadingThenCompletes() async {

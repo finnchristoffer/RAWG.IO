@@ -181,18 +181,21 @@ public struct GameDetailView: View {
         HStack(spacing: 16) {
             // Add to Favorites Button
             Button {
-                // Future: Add to favorites
+                Task {
+                    await viewModel.toggleFavorite()
+                }
             } label: {
                 HStack {
-                    Image(systemName: "heart")
-                    Text("Favorite")
+                    Image(systemName: viewModel.isFavorite ? "heart.fill" : "heart")
+                    Text(viewModel.isFavorite ? "Favorited" : "Favorite")
                 }
                 .font(Typography.body)
-                .foregroundStyle(ColorTokens.primary)
+                .foregroundStyle(viewModel.isFavorite ? .white : ColorTokens.primary)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
-                .background(ColorTokens.primary.opacity(0.1))
+                .background(viewModel.isFavorite ? ColorTokens.primary : ColorTokens.primary.opacity(0.1))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .animation(.easeInOut(duration: 0.2), value: viewModel.isFavorite)
             }
 
             // Share Button

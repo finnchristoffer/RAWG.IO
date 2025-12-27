@@ -133,9 +133,8 @@ private struct ShareOptionButton: View {
     Color.clear
         .sheet(isPresented: .constant(true)) {
             ShareSheetView(
-                shareItem: ShareItem(gameName: "The Witcher 3", gameId: 123),
-                onDismiss: {}
-            )
+                shareItem: ShareItem(gameName: "The Witcher 3", gameId: 123)
+            ) {}
         }
 }
 #endif

@@ -23,10 +23,10 @@ public final class DiskImageCache: ImageCacheProtocol, @unchecked Sendable {
         fileManager: FileManager = .default
     ) {
         self.fileManager = fileManager
-        self.directory = directory ?? fileManager.urls(
-            for: .cachesDirectory,
-            in: .userDomainMask
-        )[0].appendingPathComponent("ImageCache")
+        let cacheDir = fileManager
+            .urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("ImageCache")
+        self.directory = directory ?? cacheDir
 
         try? fileManager.createDirectory(
             at: self.directory,

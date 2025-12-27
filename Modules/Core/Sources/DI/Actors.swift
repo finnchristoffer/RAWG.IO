@@ -66,10 +66,3 @@ public actor StorageActor {
         Logger.debug("Deleted key: \(key)", privacy: .private)
     }
 }
-
-/// Thread-safe image cache using Swift actors.
-///
-/// Generic and reusable across projects.
-public actor ImageCacheActor {
-    public init() {}
-}

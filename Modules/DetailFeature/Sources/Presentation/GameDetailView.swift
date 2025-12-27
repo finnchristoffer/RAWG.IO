@@ -5,6 +5,7 @@ import CoreUI
 /// Game detail view with premium design.
 public struct GameDetailView: View {
     @StateObject private var viewModel: GameDetailViewModel
+    @State private var isShareSheetPresented = false
 
     public init(gameId: Int, gameName: String, backgroundImageURL: URL? = nil) {
         _viewModel = StateObject(wrappedValue: GameDetailViewModel(
@@ -40,6 +41,15 @@ public struct GameDetailView: View {
         .background(ColorTokens.background)
         .navigationTitle("Game Detail")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $isShareSheetPresented) {
+            ShareSheetView(
+                shareItem: ShareItem(
+                    gameName: viewModel.gameName,
+                    gameId: viewModel.gameId
+                ),
+                onDismiss: { isShareSheetPresented = false }
+            )
+        }
     }
 
     // MARK: - Hero Section
@@ -187,7 +197,7 @@ public struct GameDetailView: View {
 
             // Share Button
             Button {
-                // Future: Share game
+                isShareSheetPresented = true
             } label: {
                 HStack {
                     Image(systemName: "square.and.arrow.up")

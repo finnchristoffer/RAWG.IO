@@ -1,13 +1,23 @@
 import SwiftUI
+import SwiftData
 import Common
 import CoreUI
 
 /// Game detail view with premium design.
 public struct GameDetailView: View {
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel: GameDetailViewModel
     @State private var isShareSheetPresented = false
 
+    private let gameId: Int
+    private let gameName: String
+    private let backgroundImageURL: URL?
+
     public init(gameId: Int, gameName: String, backgroundImageURL: URL? = nil) {
+        self.gameId = gameId
+        self.gameName = gameName
+        self.backgroundImageURL = backgroundImageURL
+        // Initialize with nil modelContext, will be set in onAppear
         _viewModel = StateObject(wrappedValue: GameDetailViewModel(
             gameId: gameId,
             gameName: gameName,
@@ -49,6 +59,13 @@ public struct GameDetailView: View {
                 )
             ) {
                 isShareSheetPresented = false
+            }
+        }
+        .onAppear {
+            // Re-initialize view model with modelContext for favorites
+            viewModel.updateModelContext(modelContext)
+            Task {
+                await viewModel.loadDetails()
             }
         }
     }
@@ -227,5 +244,6 @@ public struct GameDetailView: View {
             backgroundImageURL: URL(string: "https://media.rawg.io/media/games/618/618c2031a07bbff6b4f611f10b6f6571.jpg")
         )
     }
+    .modelContainer(for: FavoriteGameModel.self, inMemory: true)
 }
 #endif

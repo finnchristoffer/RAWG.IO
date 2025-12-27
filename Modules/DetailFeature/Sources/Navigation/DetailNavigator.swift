@@ -7,7 +7,15 @@ public struct DetailNavigator {
 
     /// Creates the game detail view.
     @MainActor
-    public func navigateToDetail(gameId: Int, name: String) -> some View {
-        GameDetailView(gameId: gameId, gameName: name)
+    public func navigateToDetail(
+        gameId: Int,
+        name: String,
+        backgroundImageURL: URL? = nil
+    ) -> some View {
+        GameDetailView(
+            gameId: gameId,
+            gameName: name,
+            backgroundImageURL: backgroundImageURL
+        )
     }
 }

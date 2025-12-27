@@ -5,7 +5,7 @@ import CoreNavigation
 /// Features use this enum to navigate without knowing about each other.
 public enum AppRoute: RouteProtocol {
     /// Navigate to game detail screen.
-    case gameDetail(gameId: Int, name: String)
+    case gameDetail(gameId: Int, name: String, backgroundImageURL: URL? = nil)
 
     /// Navigate to favorites screen.
     case favorites

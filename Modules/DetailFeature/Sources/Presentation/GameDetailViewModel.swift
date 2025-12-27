@@ -13,7 +13,7 @@ public final class GameDetailViewModel: ObservableObject {
     @Published public private(set) var isFavorite = false
     @Published public private(set) var error: Error?
 
-    private let favoriteRepository: SwiftDataRepository<FavoriteGameModel>?
+    private var favoriteRepository: SwiftDataRepository<FavoriteGameModel>?
 
     public init(
         gameId: Int,
@@ -24,7 +24,16 @@ public final class GameDetailViewModel: ObservableObject {
         self.gameId = gameId
         self.gameName = gameName
         self.backgroundImageURL = backgroundImageURL
-        self.favoriteRepository = modelContext.map { SwiftDataRepository(modelContext: $0) }
+        if let context = modelContext {
+            self.favoriteRepository = SwiftDataRepository(modelContext: context)
+        }
+    }
+
+    /// Updates the model context for favorites (called from onAppear).
+    public func updateModelContext(_ context: ModelContext) {
+        if favoriteRepository == nil {
+            favoriteRepository = SwiftDataRepository(modelContext: context)
+        }
     }
 
     /// Loads game details and checks favorite status.
@@ -36,7 +45,10 @@ public final class GameDetailViewModel: ObservableObject {
 
     /// Toggles the favorite status of the game.
     public func toggleFavorite() async {
-        guard let repository = favoriteRepository else { return }
+        guard let repository = favoriteRepository else {
+            Logger.debug("⚠️ No favoriteRepository available - ModelContext not set")
+            return
+        }
 
         do {
             if isFavorite {
@@ -61,6 +73,7 @@ public final class GameDetailViewModel: ObservableObject {
             }
         } catch {
             self.error = error
+            Logger.error("❌ Favorite toggle error: \(error)")
         }
     }
 

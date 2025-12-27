@@ -96,7 +96,11 @@ struct SearchView: View {
                         platforms: game.platforms.map { $0.name }
                     )
                     .onTapGesture {
-                        router.navigate(to: AppRoute.gameDetail(gameId: game.id, name: game.name))
+                        router.navigate(to: AppRoute.gameDetail(
+                            gameId: game.id,
+                            name: game.name,
+                            backgroundImageURL: game.backgroundImage
+                        ))
                     }
                     .onAppear {
                         Task {

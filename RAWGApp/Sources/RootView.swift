@@ -70,8 +70,12 @@ struct RootView: View {
     private func registerRoutes() {
         RouteRegistry.shared.register(AppRoute.self) { route in
             switch route {
-            case let .gameDetail(gameId, name):
-                AnyView(DetailNavigator().navigateToDetail(gameId: gameId, name: name))
+            case let .gameDetail(gameId, name, backgroundImageURL):
+                AnyView(DetailNavigator().navigateToDetail(
+                    gameId: gameId,
+                    name: name,
+                    backgroundImageURL: backgroundImageURL
+                ))
             case .favorites:
                 AnyView(favoritesNavigator.navigateToFavorites())
             case .search:

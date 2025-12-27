@@ -47,11 +47,11 @@ final class InMemoryImageCacheTests: XCTestCase {
         XCTAssertNotNil(result, "Expected second image to be retrievable")
     }
 
-    func test_image_returnsCorrectImage_forMultipleURLs() async {
+    func test_image_returnsCorrectImage_forMultipleURLs() async throws {
         // Arrange
         let sut = makeSUT()
-        let url1 = URL(string: "https://example.com/image1.jpg")!
-        let url2 = URL(string: "https://example.com/image2.jpg")!
+        let url1 = try XCTUnwrap(URL(string: "https://example.com/image1.jpg"))
+        let url2 = try XCTUnwrap(URL(string: "https://example.com/image2.jpg"))
         let image1 = anyImage(color: .red)
         let image2 = anyImage(color: .blue)
 
@@ -82,11 +82,11 @@ final class InMemoryImageCacheTests: XCTestCase {
         XCTAssertNil(result, "Expected image to be removed")
     }
 
-    func test_remove_doesNotAffectOtherImages() async {
+    func test_remove_doesNotAffectOtherImages() async throws {
         // Arrange
         let sut = makeSUT()
-        let url1 = URL(string: "https://example.com/image1.jpg")!
-        let url2 = URL(string: "https://example.com/image2.jpg")!
+        let url1 = try XCTUnwrap(URL(string: "https://example.com/image1.jpg"))
+        let url2 = try XCTUnwrap(URL(string: "https://example.com/image2.jpg"))
         await sut.store(anyImage(), for: url1)
         await sut.store(anyImage(), for: url2)
 
@@ -102,11 +102,11 @@ final class InMemoryImageCacheTests: XCTestCase {
 
     // MARK: - Clear Tests
 
-    func test_clear_removesAllImages() async {
+    func test_clear_removesAllImages() async throws {
         // Arrange
         let sut = makeSUT()
-        let url1 = URL(string: "https://example.com/image1.jpg")!
-        let url2 = URL(string: "https://example.com/image2.jpg")!
+        let url1 = try XCTUnwrap(URL(string: "https://example.com/image1.jpg"))
+        let url2 = try XCTUnwrap(URL(string: "https://example.com/image2.jpg"))
         await sut.store(anyImage(), for: url1)
         await sut.store(anyImage(), for: url2)
 
@@ -132,6 +132,7 @@ final class InMemoryImageCacheTests: XCTestCase {
     }
 
     private func anyURL() -> URL {
+        // swiftlint:disable:next force_unwrapping
         URL(string: "https://example.com/image.jpg")!
     }
 

@@ -4,7 +4,7 @@ import SwiftData
 
 /// Tests for SwiftDataRepository
 final class SwiftDataRepositoryTests: XCTestCase {
-    private var modelContainer: ModelContainer!
+    private var modelContainer: ModelContainer?
 
     @MainActor
     override func setUp() async throws {
@@ -24,7 +24,7 @@ final class SwiftDataRepositoryTests: XCTestCase {
     @MainActor
     func test_insert_savesModel() async throws {
         // Arrange
-        let sut = makeSUT()
+        let sut = try makeSUT()
         let model = TestModel(name: "Test Item")
 
         // Act
@@ -41,7 +41,7 @@ final class SwiftDataRepositoryTests: XCTestCase {
     @MainActor
     func test_fetch_returnsAllModels() async throws {
         // Arrange
-        let sut = makeSUT()
+        let sut = try makeSUT()
         try await sut.insert(TestModel(name: "Item 1"))
         try await sut.insert(TestModel(name: "Item 2"))
 
@@ -55,7 +55,7 @@ final class SwiftDataRepositoryTests: XCTestCase {
     @MainActor
     func test_fetch_withPredicate_filtersModels() async throws {
         // Arrange
-        let sut = makeSUT()
+        let sut = try makeSUT()
         try await sut.insert(TestModel(name: "Apple"))
         try await sut.insert(TestModel(name: "Banana"))
 
@@ -73,7 +73,7 @@ final class SwiftDataRepositoryTests: XCTestCase {
     @MainActor
     func test_delete_removesModel() async throws {
         // Arrange
-        let sut = makeSUT()
+        let sut = try makeSUT()
         let model = TestModel(name: "To Delete")
         try await sut.insert(model)
 
@@ -88,8 +88,9 @@ final class SwiftDataRepositoryTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func makeSUT() -> SwiftDataRepository<TestModel> {
-        SwiftDataRepository(modelContext: modelContainer.mainContext)
+    private func makeSUT() throws -> SwiftDataRepository<TestModel> {
+        let container = try XCTUnwrap(modelContainer)
+        return SwiftDataRepository(modelContext: container.mainContext)
     }
 }
 

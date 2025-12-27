@@ -122,6 +122,7 @@ final class ImageCacheActorTests: XCTestCase {
     }
 
     private func anyURL() -> URL {
+        // swiftlint:disable:next force_unwrapping
         URL(string: "https://example.com/image.jpg")!
     }
 

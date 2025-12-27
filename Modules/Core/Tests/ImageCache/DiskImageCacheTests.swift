@@ -3,12 +3,13 @@ import XCTest
 
 /// Tests for DiskImageCache
 final class DiskImageCacheTests: XCTestCase {
-    private var testDirectory: URL!
+    private var testDirectory: URL?
 
     override func setUp() async throws {
         try await super.setUp()
         testDirectory = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
+        guard let testDirectory else { return }
         try FileManager.default.createDirectory(
             at: testDirectory,
             withIntermediateDirectories: true
@@ -16,7 +17,9 @@ final class DiskImageCacheTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-        try? FileManager.default.removeItem(at: testDirectory)
+        if let testDirectory {
+            try? FileManager.default.removeItem(at: testDirectory)
+        }
         try await super.tearDown()
     }
 
@@ -58,15 +61,16 @@ final class DiskImageCacheTests: XCTestCase {
         await sut.store(image, for: url)
 
         // Assert
-        let files = try FileManager.default.contentsOfDirectory(at: testDirectory, includingPropertiesForKeys: nil)
+        let directory = try XCTUnwrap(testDirectory)
+        let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         XCTAssertFalse(files.isEmpty, "Expected file to be persisted to disk")
     }
 
     func test_image_returnsCorrectImage_forMultipleURLs() async throws {
         // Arrange
         let sut = try makeSUT()
-        let url1 = URL(string: "https://example.com/image1.jpg")!
-        let url2 = URL(string: "https://example.com/image2.jpg")!
+        let url1 = try XCTUnwrap(URL(string: "https://example.com/image1.jpg"))
+        let url2 = try XCTUnwrap(URL(string: "https://example.com/image2.jpg"))
         let image1 = anyImage(color: .red)
         let image2 = anyImage(color: .blue)
 
@@ -107,7 +111,8 @@ final class DiskImageCacheTests: XCTestCase {
         await sut.remove(for: url)
 
         // Assert
-        let files = try FileManager.default.contentsOfDirectory(at: testDirectory, includingPropertiesForKeys: nil)
+        let directory = try XCTUnwrap(testDirectory)
+        let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         XCTAssertTrue(files.isEmpty, "Expected file to be deleted from disk")
     }
 
@@ -116,8 +121,8 @@ final class DiskImageCacheTests: XCTestCase {
     func test_clear_removesAllImages() async throws {
         // Arrange
         let sut = try makeSUT()
-        let url1 = URL(string: "https://example.com/image1.jpg")!
-        let url2 = URL(string: "https://example.com/image2.jpg")!
+        let url1 = try XCTUnwrap(URL(string: "https://example.com/image1.jpg"))
+        let url2 = try XCTUnwrap(URL(string: "https://example.com/image2.jpg"))
         await sut.store(anyImage(), for: url1)
         await sut.store(anyImage(), for: url2)
 
@@ -134,14 +139,17 @@ final class DiskImageCacheTests: XCTestCase {
     func test_clear_removesAllFilesFromDisk() async throws {
         // Arrange
         let sut = try makeSUT()
-        await sut.store(anyImage(), for: URL(string: "https://example.com/1.jpg")!)
-        await sut.store(anyImage(), for: URL(string: "https://example.com/2.jpg")!)
+        let url1 = try XCTUnwrap(URL(string: "https://example.com/1.jpg"))
+        let url2 = try XCTUnwrap(URL(string: "https://example.com/2.jpg"))
+        await sut.store(anyImage(), for: url1)
+        await sut.store(anyImage(), for: url2)
 
         // Act
         await sut.clear()
 
         // Assert
-        let files = try FileManager.default.contentsOfDirectory(at: testDirectory, includingPropertiesForKeys: nil)
+        let directory = try XCTUnwrap(testDirectory)
+        let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         XCTAssertTrue(files.isEmpty, "Expected all files to be cleared from disk")
     }
 
@@ -151,12 +159,14 @@ final class DiskImageCacheTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> DiskImageCache {
-        let sut = DiskImageCache(directory: testDirectory)
+        let directory = try XCTUnwrap(testDirectory)
+        let sut = DiskImageCache(directory: directory)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
 
     private func anyURL() -> URL {
+        // swiftlint:disable:next force_unwrapping
         URL(string: "https://example.com/image.jpg")!
     }
 

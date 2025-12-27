@@ -46,9 +46,10 @@ public struct GameDetailView: View {
                 shareItem: ShareItem(
                     gameName: viewModel.gameName,
                     gameId: viewModel.gameId
-                ),
-                onDismiss: { isShareSheetPresented = false }
-            )
+                )
+            ) {
+                isShareSheetPresented = false
+            }
         }
     }
 
@@ -59,7 +60,7 @@ public struct GameDetailView: View {
             if let imageURL = viewModel.backgroundImageURL {
                 // RAWG Background Image
                 GameImageView(url: imageURL)
-                    .aspectRatio(16/9, contentMode: .fill)
+                    .aspectRatio(16.0 / 9.0, contentMode: .fill)
                     .frame(height: 280)
                     .clipped()
                     .overlay(

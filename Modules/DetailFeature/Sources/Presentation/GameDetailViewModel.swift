@@ -5,12 +5,18 @@ import Foundation
 public final class GameDetailViewModel: ObservableObject {
     @Published public private(set) var gameId: Int
     @Published public private(set) var gameName: String
+    @Published public private(set) var backgroundImageURL: URL?
     @Published public private(set) var isLoading = false
     @Published public private(set) var error: Error?
 
-    public init(gameId: Int, gameName: String) {
+    public init(
+        gameId: Int,
+        gameName: String,
+        backgroundImageURL: URL? = nil
+    ) {
         self.gameId = gameId
         self.gameName = gameName
+        self.backgroundImageURL = backgroundImageURL
     }
 
     /// Placeholder for future detail loading.

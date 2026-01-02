@@ -13,6 +13,7 @@ struct RootView: View {
     private let gamesNavigator = GamesNavigator()
     private let searchNavigator = SearchNavigator()
     private let favoritesNavigator = FavoritesNavigator()
+    private let detailNavigator: DetailNavigator
 
     @State private var selectedTab: Tab = .games
     @State private var gamesPath = NavigationPath()
@@ -21,6 +22,20 @@ struct RootView: View {
 
     enum Tab {
         case games, search, favorites
+    }
+
+    init() {
+        // Get UseCases from Navigators - proper encapsulation
+        // Navigators are the only public API for each feature module
+        let gamesNav = GamesNavigator()
+        let favoritesNav = FavoritesNavigator()
+
+        detailNavigator = DetailNavigator(
+            getGameDetailUseCase: gamesNav.getGameDetailUseCase(),
+            addFavoriteUseCase: favoritesNav.addFavoriteUseCase(),
+            removeFavoriteUseCase: favoritesNav.removeFavoriteUseCase(),
+            isFavoriteUseCase: favoritesNav.isFavoriteUseCase()
+        )
     }
 
     var body: some View {
@@ -68,10 +83,10 @@ struct RootView: View {
 
     /// Register route resolvers.
     private func registerRoutes() {
-        RouteRegistry.shared.register(AppRoute.self) { route in
+        RouteRegistry.shared.register(AppRoute.self) { [detailNavigator] route in
             switch route {
             case let .gameDetail(gameId, name, backgroundImageURL):
-                AnyView(DetailNavigator().navigateToDetail(
+                AnyView(detailNavigator.navigateToDetail(
                     gameId: gameId,
                     name: name,
                     backgroundImageURL: backgroundImageURL

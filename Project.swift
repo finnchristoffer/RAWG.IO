@@ -256,7 +256,8 @@ let project = Project(
             sources: ["Modules/DetailFeature/Sources/**"],
             dependencies: [
                 .target(name: "Common"),
-                .target(name: "CoreUI")
+                .target(name: "CoreUI"),
+                .external(name: "Factory")
             ]
         ),
         .target(

@@ -2,16 +2,16 @@ import SwiftUI
 import CoreUI
 
 /// Share sheet view for sharing game details.
-public struct ShareSheetView: View {
+struct ShareSheetView: View {
     private let shareItem: ShareItem
     private let onDismiss: () -> Void
 
-    public init(shareItem: ShareItem, onDismiss: @escaping () -> Void) {
+    init(shareItem: ShareItem, onDismiss: @escaping () -> Void) {
         self.shareItem = shareItem
         self.onDismiss = onDismiss
     }
 
-    public var body: some View {
+    var body: some View {
         VStack(spacing: 0) {
             // Handle bar
             handleBar

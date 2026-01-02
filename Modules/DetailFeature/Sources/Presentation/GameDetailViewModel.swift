@@ -1,92 +1,170 @@
 import Foundation
-import SwiftData
 import Core
 import Common
 
 /// ViewModel for Game Detail screen.
+/// Uses Clean Architecture - only injects UseCase protocols.
 @MainActor
-public final class GameDetailViewModel: ObservableObject {
-    @Published public private(set) var gameId: Int
-    @Published public private(set) var gameName: String
-    @Published public private(set) var backgroundImageURL: URL?
-    @Published public private(set) var isLoading = false
-    @Published public private(set) var isFavorite = false
-    @Published public private(set) var error: Error?
+final class GameDetailViewModel: ObservableObject {
+    // MARK: - Published State
 
-    private var favoriteRepository: SwiftDataRepository<FavoriteGameModel>?
+    @Published private(set) var gameId: Int
+    @Published private(set) var gameName: String
+    @Published private(set) var backgroundImageURL: URL?
+    @Published private(set) var isLoading = false
+    @Published private(set) var isFavorite = false
+    @Published private(set) var error: Error?
 
-    public init(
+    // Game Detail Data
+    @Published private(set) var rating: Double = 0.0
+    @Published private(set) var released: String?
+    @Published private(set) var platforms: [String] = []
+    @Published private(set) var descriptionText: String?
+    @Published private(set) var metacritic: Int?
+
+    // MARK: - Dependencies (UseCases)
+
+    private let getGameDetailUseCase: GetGameDetailUseCaseProtocol?
+    private let addFavoriteUseCase: AddFavoriteUseCaseProtocol?
+    private let removeFavoriteUseCase: RemoveFavoriteUseCaseProtocol?
+    private let isFavoriteUseCase: IsFavoriteUseCaseProtocol?
+
+    // MARK: - Private State
+
+    private var gameDetail: GameDetailEntity?
+    private let isPreview: Bool
+
+    /// Standard initializer with UseCase injection.
+    init(
         gameId: Int,
         gameName: String,
         backgroundImageURL: URL? = nil,
-        modelContext: ModelContext? = nil
+        getGameDetailUseCase: GetGameDetailUseCaseProtocol?,
+        addFavoriteUseCase: AddFavoriteUseCaseProtocol?,
+        removeFavoriteUseCase: RemoveFavoriteUseCaseProtocol?,
+        isFavoriteUseCase: IsFavoriteUseCaseProtocol?
     ) {
         self.gameId = gameId
         self.gameName = gameName
         self.backgroundImageURL = backgroundImageURL
-        if let context = modelContext {
-            self.favoriteRepository = SwiftDataRepository(modelContext: context)
-        }
+        self.getGameDetailUseCase = getGameDetailUseCase
+        self.addFavoriteUseCase = addFavoriteUseCase
+        self.removeFavoriteUseCase = removeFavoriteUseCase
+        self.isFavoriteUseCase = isFavoriteUseCase
+        self.isPreview = false
     }
 
-    /// Updates the model context for favorites (called from onAppear).
-    public func updateModelContext(_ context: ModelContext) {
-        if favoriteRepository == nil {
-            favoriteRepository = SwiftDataRepository(modelContext: context)
-        }
+    /// Preview initializer with mock data.
+    init(
+        gameId: Int,
+        gameName: String,
+        backgroundImageURL: URL? = nil,
+        rating: Double = 0.0,
+        released: String? = nil,
+        platforms: [String] = [],
+        descriptionText: String? = nil,
+        metacritic: Int? = nil,
+        isPreview: Bool = true
+    ) {
+        self.gameId = gameId
+        self.gameName = gameName
+        self.backgroundImageURL = backgroundImageURL
+        self.rating = rating
+        self.released = released
+        self.platforms = platforms
+        self.descriptionText = descriptionText
+        self.metacritic = metacritic
+        self.getGameDetailUseCase = nil
+        self.addFavoriteUseCase = nil
+        self.removeFavoriteUseCase = nil
+        self.isFavoriteUseCase = nil
+        self.isPreview = isPreview
     }
 
-    /// Loads game details and checks favorite status.
-    public func loadDetails() async {
+    /// Loads game details from API and checks favorite status.
+    func loadDetails() async {
+        guard !isPreview else { return }
+
         isLoading = true
+        error = nil
+
+        if let useCase = getGameDetailUseCase {
+            do {
+                let detail = try await useCase.execute(id: gameId)
+                gameDetail = detail
+
+                gameName = detail.name
+                rating = detail.rating
+                released = detail.released
+                descriptionText = detail.descriptionRaw ?? detail.description
+                metacritic = detail.metacritic
+                platforms = detail.platforms.map { $0.name }
+                if let imageURL = detail.backgroundImage {
+                    backgroundImageURL = imageURL
+                }
+            } catch {
+                self.error = error
+                Logger.error("Failed to load game detail: \(error)")
+            }
+        }
+
         await checkFavoriteStatus()
         isLoading = false
     }
 
     /// Toggles the favorite status of the game.
-    public func toggleFavorite() async {
-        guard let repository = favoriteRepository else {
-            Logger.debug("⚠️ No favoriteRepository available - ModelContext not set")
-            return
-        }
+    func toggleFavorite() async {
+        guard !isPreview else { return }
 
         do {
             if isFavorite {
-                // Remove from favorites
-                let targetGameId = gameId
-                let predicate = #Predicate<FavoriteGameModel> { $0.gameId == targetGameId }
-                let favorites = try await repository.fetch(predicate: predicate)
-                if let favorite = favorites.first {
-                    try await repository.delete(favorite)
-                }
+                try await removeFavoriteUseCase?.execute(gameId: gameId)
                 isFavorite = false
             } else {
-                // Add to favorites
-                let favorite = FavoriteGameModel(
-                    gameId: gameId,
+                let game = GameEntity(
+                    id: gameId,
+                    slug: "",
                     name: gameName,
-                    backgroundImageURL: backgroundImageURL?.absoluteString,
-                    rating: 0.0
+                    released: released,
+                    backgroundImage: backgroundImageURL,
+                    rating: rating,
+                    ratingsCount: 0,
+                    metacritic: metacritic,
+                    playtime: 0,
+                    platforms: platforms.map { PlatformEntity(id: 0, name: $0, slug: $0.lowercased()) },
+                    genres: []
                 )
-                try await repository.insert(favorite)
+                try await addFavoriteUseCase?.execute(game)
                 isFavorite = true
             }
         } catch {
             self.error = error
-            Logger.error("❌ Favorite toggle error: \(error)")
+            Logger.error("Favorite toggle error: \(error)")
         }
+    }
+
+    // MARK: - Computed Properties
+
+    var releaseYear: String {
+        guard let released else { return "—" }
+        return String(released.prefix(4))
+    }
+
+    var primaryPlatform: String {
+        platforms.first ?? "—"
+    }
+
+    var ratingString: String {
+        String(format: "%.1f", rating)
     }
 
     // MARK: - Private
 
     private func checkFavoriteStatus() async {
-        guard let repository = favoriteRepository else { return }
+        guard !isPreview, let useCase = isFavoriteUseCase else { return }
 
         do {
-            let targetGameId = gameId
-            let predicate = #Predicate<FavoriteGameModel> { $0.gameId == targetGameId }
-            let favorites = try await repository.fetch(predicate: predicate)
-            isFavorite = !favorites.isEmpty
+            isFavorite = try await useCase.execute(gameId: gameId)
         } catch {
             self.error = error
         }

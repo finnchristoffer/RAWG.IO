@@ -9,8 +9,15 @@ final class GameDetailViewSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func test_gameDetailView_displaysGameInfo() {
-        // Arrange
-        let view = GameDetailView(gameId: 123, gameName: "The Witcher 3: Wild Hunt")
+        // Arrange - use mock ViewModel for testing
+        let viewModel = GameDetailViewModel(
+            gameId: 123,
+            gameName: "The Witcher 3: Wild Hunt",
+            rating: 4.5,
+            platforms: ["PC", "PlayStation 4"],
+            isPreview: true
+        )
+        let view = GameDetailView(viewModel: viewModel)
             .frame(width: 390, height: 844)
 
         // Assert
@@ -19,7 +26,12 @@ final class GameDetailViewSnapshotTests: XCTestCase {
 
     func test_gameDetailView_shortGameName() {
         // Arrange
-        let view = GameDetailView(gameId: 1, gameName: "Halo")
+        let viewModel = GameDetailViewModel(
+            gameId: 1,
+            gameName: "Halo",
+            isPreview: true
+        )
+        let view = GameDetailView(viewModel: viewModel)
             .frame(width: 390, height: 844)
 
         // Assert
@@ -28,13 +40,16 @@ final class GameDetailViewSnapshotTests: XCTestCase {
 
     func test_gameDetailView_longGameName() {
         // Arrange
-        let view = GameDetailView(
+        let viewModel = GameDetailViewModel(
             gameId: 999,
-            gameName: "The Legend of Zelda: Tears of the Kingdom - Collector's Edition"
+            gameName: "The Legend of Zelda: Tears of the Kingdom - Collector's Edition",
+            isPreview: true
         )
-        .frame(width: 390, height: 844)
+        let view = GameDetailView(viewModel: viewModel)
+            .frame(width: 390, height: 844)
 
         // Assert
         assertSnapshot(of: view, as: .image)
     }
 }
+

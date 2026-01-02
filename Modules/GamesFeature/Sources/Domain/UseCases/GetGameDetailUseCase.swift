@@ -2,23 +2,28 @@ import Foundation
 import Common
 
 /// Use case for fetching game detail.
-public final class GetGameDetailUseCase: Sendable {
+/// Internal - only accessible within GamesFeature module.
+final class GetGameDetailUseCase: GetGameDetailUseCaseProtocol, Sendable {
     // MARK: - Dependencies
 
     private let repository: GamesRepositoryProtocol
 
     // MARK: - Init
 
-    public init(repository: GamesRepositoryProtocol) {
+    init(repository: GamesRepositoryProtocol) {
         self.repository = repository
     }
 
     // MARK: - Execute
 
+    /// Fetches detailed information for a game by ID.
+    func execute(id: Int) async throws -> GameDetailEntity {
+        let input = GameDetailInput(id: id)
+        return try await repository.getGameDetail(input)
+    }
+
     /// Fetches detailed information for a game.
-    /// - Parameter input: The input with game ID.
-    /// - Returns: Game detail entity.
-    public func execute(_ input: GameDetailInput) async throws -> GameDetailEntity {
+    func execute(_ input: GameDetailInput) async throws -> GameDetailEntity {
         try await repository.getGameDetail(input)
     }
 }

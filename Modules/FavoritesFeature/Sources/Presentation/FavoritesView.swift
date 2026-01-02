@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftData
 import Common
 import CoreUI
 import CoreNavigation
+import Factory
 
 /// View displaying favorite games.
 struct FavoritesView: View {
@@ -16,6 +18,9 @@ struct FavoritesView: View {
         content
             .navigationTitle("Favorites")
             .task {
+                await viewModel.loadFavorites()
+            }
+            .refreshable {
                 await viewModel.loadFavorites()
             }
     }

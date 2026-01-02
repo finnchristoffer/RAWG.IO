@@ -1,63 +1,46 @@
 import Foundation
 import SwiftData
 import Factory
+import Common
+import Core
 
 // MARK: - FavoritesFeature Module DI Assembly
+// All factories are internal - only FavoritesNavigator is public.
 
 extension Container {
-    // MARK: - SwiftData
+    // MARK: - Internal Services
 
-    /// ModelContainer for FavoriteGame.
-    var favoriteModelContainer: Factory<ModelContainer> {
-        self {
-            do {
-                return try ModelContainer(for: FavoriteGame.self)
-            } catch {
-                fatalError("Failed to create ModelContainer: \(error)")
-            }
-        }
-        .singleton
+    /// DefaultFavoritesService - internal singleton.
+    var defaultFavoritesService: Factory<DefaultFavoritesService> {
+        self { DefaultFavoritesService() }
+            .singleton
     }
 
-    // MARK: - DataSources
+    // MARK: - UseCases (Internal)
 
-    /// FavoritesLocalDataSource.
-    var favoritesLocalDataSource: Factory<FavoritesLocalDataSource> {
-        self { FavoritesLocalDataSource(modelContainer: self.favoriteModelContainer()) }
+    /// AddFavoriteUseCase - returns protocol type.
+    var addFavoriteUseCase: Factory<AddFavoriteUseCaseProtocol> {
+        self { AddFavoriteUseCase(service: self.defaultFavoritesService()) as AddFavoriteUseCaseProtocol }
     }
 
-    // MARK: - Repositories
-
-    /// FavoritesRepository.
-    var favoritesRepository: Factory<FavoritesRepository> {
-        self { FavoritesRepository(localDataSource: self.favoritesLocalDataSource()) }
+    /// RemoveFavoriteUseCase - returns protocol type.
+    var removeFavoriteUseCase: Factory<RemoveFavoriteUseCaseProtocol> {
+        self { RemoveFavoriteUseCase(service: self.defaultFavoritesService()) as RemoveFavoriteUseCaseProtocol }
     }
 
-    // MARK: - UseCases
-
-    /// AddFavoriteUseCase.
-    var addFavoriteUseCase: Factory<AddFavoriteUseCase> {
-        self { AddFavoriteUseCase(repository: self.favoritesRepository()) }
+    /// IsFavoriteUseCase - returns protocol type.
+    var isFavoriteUseCase: Factory<IsFavoriteUseCaseProtocol> {
+        self { IsFavoriteUseCase(service: self.defaultFavoritesService()) as IsFavoriteUseCaseProtocol }
     }
 
-    /// RemoveFavoriteUseCase.
-    var removeFavoriteUseCase: Factory<RemoveFavoriteUseCase> {
-        self { RemoveFavoriteUseCase(repository: self.favoritesRepository()) }
+    /// GetFavoritesUseCase - returns protocol type.
+    var getFavoritesUseCase: Factory<GetFavoritesUseCaseProtocol> {
+        self { GetFavoritesUseCase(service: self.defaultFavoritesService()) as GetFavoritesUseCaseProtocol }
     }
 
-    /// GetFavoritesUseCase.
-    var getFavoritesUseCase: Factory<GetFavoritesUseCase> {
-        self { GetFavoritesUseCase(repository: self.favoritesRepository()) }
-    }
+    // MARK: - ViewModels (Internal)
 
-    /// IsFavoriteUseCase.
-    var isFavoriteUseCase: Factory<IsFavoriteUseCase> {
-        self { IsFavoriteUseCase(repository: self.favoritesRepository()) }
-    }
-
-    // MARK: - ViewModels
-
-    /// FavoritesViewModel.
+    /// FavoritesViewModel - internal.
     @MainActor var favoritesViewModel: Factory<FavoritesViewModel> {
         self {
             FavoritesViewModel(

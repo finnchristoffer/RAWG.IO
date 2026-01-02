@@ -11,16 +11,16 @@ final class FavoritesViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var error: Error?
 
-    // MARK: - Dependencies
+    // MARK: - Dependencies (UseCase Protocols)
 
-    private let getFavoritesUseCase: GetFavoritesUseCase
-    private let removeFavoriteUseCase: RemoveFavoriteUseCase
+    private let getFavoritesUseCase: GetFavoritesUseCaseProtocol
+    private let removeFavoriteUseCase: RemoveFavoriteUseCaseProtocol
 
     // MARK: - Init
 
     nonisolated init(
-        getFavoritesUseCase: GetFavoritesUseCase,
-        removeFavoriteUseCase: RemoveFavoriteUseCase
+        getFavoritesUseCase: GetFavoritesUseCaseProtocol,
+        removeFavoriteUseCase: RemoveFavoriteUseCaseProtocol
     ) {
         self.getFavoritesUseCase = getFavoritesUseCase
         self.removeFavoriteUseCase = removeFavoriteUseCase

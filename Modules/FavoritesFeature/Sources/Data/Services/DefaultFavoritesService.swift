@@ -28,7 +28,7 @@ final class DefaultFavoritesService {
         return container.mainContext
     }
 
-    public func addFavorite(_ game: GameEntity) async throws {
+    func addFavorite(_ game: GameEntity) async throws {
         let context = try ensureContext()
         
         // Check if already exists
@@ -53,7 +53,7 @@ final class DefaultFavoritesService {
         try context.save()
     }
 
-    public func removeFavorite(gameId: Int) async throws {
+    func removeFavorite(gameId: Int) async throws {
         let context = try ensureContext()
         let targetId = gameId
         let descriptor = FetchDescriptor<FavoriteGameModel>(
@@ -66,7 +66,7 @@ final class DefaultFavoritesService {
         }
     }
 
-    public func isFavorite(gameId: Int) async throws -> Bool {
+    func isFavorite(gameId: Int) async throws -> Bool {
         let context = try ensureContext()
         let targetId = gameId
         let descriptor = FetchDescriptor<FavoriteGameModel>(
@@ -76,7 +76,7 @@ final class DefaultFavoritesService {
         return !favorites.isEmpty
     }
 
-    public func getAllFavorites() async throws -> [GameEntity] {
+    func getAllFavorites() async throws -> [GameEntity] {
         let context = try ensureContext()
         let descriptor = FetchDescriptor<FavoriteGameModel>()
         let favorites = try context.fetch(descriptor)

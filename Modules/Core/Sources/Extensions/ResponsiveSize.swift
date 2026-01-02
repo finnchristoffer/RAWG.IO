@@ -11,6 +11,7 @@ public enum DesignReference {
 // MARK: - Screen Helper
 
 /// Provides current screen dimensions
+@MainActor
 public enum ScreenSize {
     public static var width: CGFloat {
         UIScreen.main.bounds.width
@@ -52,16 +53,17 @@ extension Int: ExtensionCompatible {}
 
 // MARK: - Responsive Size Extensions
 
+@MainActor
 public extension ExtensionWrapper where Base == CGFloat {
     /// Scales the value proportionally based on screen width relative to iPhone 13 design.
     /// Example: `150.ext.w` on iPhone 13 returns 150, on iPhone SE returns ~144
-    var w: CGFloat {
+    var w: CGFloat { // swiftlint:disable:this identifier_name
         base * ScreenSize.width / DesignReference.width
     }
 
     /// Scales the value proportionally based on screen height relative to iPhone 13 design.
     /// Example: `150.ext.h` on iPhone 13 returns 150, on iPhone SE returns ~119
-    var h: CGFloat {
+    var h: CGFloat { // swiftlint:disable:this identifier_name
         base * ScreenSize.height / DesignReference.height
     }
 
@@ -73,14 +75,15 @@ public extension ExtensionWrapper where Base == CGFloat {
     }
 }
 
+@MainActor
 public extension ExtensionWrapper where Base == Double {
     /// Scales the value proportionally based on screen width.
-    var w: CGFloat {
+    var w: CGFloat { // swiftlint:disable:this identifier_name
         CGFloat(base) * ScreenSize.width / DesignReference.width
     }
 
     /// Scales the value proportionally based on screen height.
-    var h: CGFloat {
+    var h: CGFloat { // swiftlint:disable:this identifier_name
         CGFloat(base) * ScreenSize.height / DesignReference.height
     }
 
@@ -92,14 +95,15 @@ public extension ExtensionWrapper where Base == Double {
     }
 }
 
+@MainActor
 public extension ExtensionWrapper where Base == Int {
     /// Scales the value proportionally based on screen width.
-    var w: CGFloat {
+    var w: CGFloat { // swiftlint:disable:this identifier_name
         CGFloat(base) * ScreenSize.width / DesignReference.width
     }
 
     /// Scales the value proportionally based on screen height.
-    var h: CGFloat {
+    var h: CGFloat { // swiftlint:disable:this identifier_name
         CGFloat(base) * ScreenSize.height / DesignReference.height
     }
 

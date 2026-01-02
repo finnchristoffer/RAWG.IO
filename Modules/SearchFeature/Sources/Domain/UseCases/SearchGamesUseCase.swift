@@ -2,23 +2,15 @@ import Foundation
 import Common
 
 /// Use case for searching games.
-public final class SearchGamesUseCase: Sendable {
-    // MARK: - Dependencies
-
+/// Internal - only for SearchFeature.
+final class SearchGamesUseCase: Sendable {
     private let repository: GamesRepositoryProtocol
 
-    // MARK: - Init
-
-    public init(repository: GamesRepositoryProtocol) {
+    init(repository: GamesRepositoryProtocol) {
         self.repository = repository
     }
 
-    // MARK: - Execute
-
-    /// Searches games by query.
-    /// - Parameter input: The search input with query and page.
-    /// - Returns: Paginated entity of games matching the search.
-    public func execute(_ input: SearchGamesInput) async throws -> PaginatedEntity<GameEntity> {
+    func execute(_ input: SearchGamesInput) async throws -> PaginatedEntity<GameEntity> {
         try await repository.searchGames(input)
     }
 }

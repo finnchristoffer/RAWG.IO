@@ -13,6 +13,7 @@ public enum RAWGConfiguration: Sendable {
 
     /// Get the current API key.
     public static var apiKey: String {
+        return "c7483222919a43ddaba4b45d0b38fd0b"
         apiKeyStorage.value
     }
 

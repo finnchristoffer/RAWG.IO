@@ -52,4 +52,3 @@ final class GameDetailViewSnapshotTests: XCTestCase {
         assertSnapshot(of: view, as: .image)
     }
 }
-

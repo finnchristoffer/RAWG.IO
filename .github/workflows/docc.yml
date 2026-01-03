@@ -73,33 +73,49 @@ jobs:
       
       - name: Build Documentation
         run: |
-          xcodebuild docbuild \
-            -workspace RAWG.xcworkspace \
-            -scheme RAWGApp \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
-            -derivedDataPath DerivedData \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
+          # Define schemes to build documentation for
+          SCHEMES=("RAWGApp" "Core" "CoreNavigation" "CoreNetwork")
+          
+          for SCHEME in "${SCHEMES[@]}"; do
+            echo "Building documentation for $SCHEME..."
+            xcodebuild docbuild \
+              -workspace RAWG.xcworkspace \
+              -scheme "$SCHEME" \
+              -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+              -derivedDataPath DerivedData \
+              CODE_SIGN_IDENTITY="" \
+              CODE_SIGNING_REQUIRED=NO \
+              CODE_SIGNING_ALLOWED=NO
+          done
       
       - name: Process Documentation
         run: |
-          DOCC_ARCHIVE=$(find DerivedData -name "*.doccarchive" -type d | head -1)
+          mkdir -p docs
           
-          if [ -z "$DOCC_ARCHIVE" ]; then
-            echo "No documentation archive found"
-            exit 1
-          fi
+          # Find all doccarchives
+          find DerivedData -name "*.doccarchive" -type d | while read archive; do
+            echo "Processing $archive..."
+            
+            # Extract target name from archive path (e.g., DerivedData/.../Products/.../Core.doccarchive -> Core)
+            TARGET_NAME=$(basename "$archive" .doccarchive)
+            
+            # Process archive for static hosting
+            $(xcrun --find docc) process-archive \
+              transform-for-static-hosting "$archive" \
+              --hosting-base-path RAWG.IO \
+              --output-path "docs/$TARGET_NAME"
+          done
           
-          echo "Found: $DOCC_ARCHIVE"
+          # Create an index.html that links to the main app docs or lists them
+          echo "<html><body><h1>Documentation Index</h1><ul>" > docs/index.html
+          ls docs | grep -v "index.html" | while read dir; do
+             echo "<li><a href=\"$dir/documentation/$dir\">$dir</a></li>" >> docs/index.html
+          done
+          echo "</ul></body></html>" >> docs/index.html
           
-          $(xcrun --find docc) process-archive \
-            transform-for-static-hosting "$DOCC_ARCHIVE" \
-            --hosting-base-path RAWG.IO \
-            --output-path docs
-          
-          DOC_FOLDER=$(ls docs/documentation/ | head -1)
-          echo "<meta http-equiv=\"refresh\" content=\"0; url=documentation/$DOC_FOLDER/\">" > docs/index.html
+          # Also set up a redirect to the main app if desired
+          # DOC_FOLDER=$(ls docs/RAWGApp/documentation/ | head -1)
+          # echo "<meta http-equiv=\"refresh\" content=\"0; url=RAWGApp/documentation/$DOC_FOLDER/\">" > docs/index.html
       
       - name: Upload Pages Artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

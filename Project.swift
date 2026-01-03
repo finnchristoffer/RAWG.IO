@@ -323,6 +323,27 @@ let project = Project(
             runAction: .runAction(configuration: "Debug")
         ),
         .scheme(
+            name: "Core",
+            shared: true,
+            buildAction: .buildAction(targets: ["Core"]),
+            testAction: .targets(["CoreTests"]),
+            runAction: .runAction(configuration: "Debug")
+        ),
+        .scheme(
+            name: "CoreNavigation",
+            shared: true,
+            buildAction: .buildAction(targets: ["CoreNavigation"]),
+            testAction: .targets(["CoreNavigationTests"]),
+            runAction: .runAction(configuration: "Debug")
+        ),
+        .scheme(
+            name: "CoreNetwork",
+            shared: true,
+            buildAction: .buildAction(targets: ["CoreNetwork"]),
+            testAction: .targets(["CoreNetworkTests"]),
+            runAction: .runAction(configuration: "Debug")
+        ),
+        .scheme(
             name: "Common",
             shared: true,
             buildAction: .buildAction(targets: ["Common"]),

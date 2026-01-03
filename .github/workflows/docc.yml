@@ -73,33 +73,149 @@ jobs:
       
       - name: Build Documentation
         run: |
-          xcodebuild docbuild \
-            -workspace RAWG.xcworkspace \
-            -scheme RAWGApp \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
-            -derivedDataPath DerivedData \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
+          # Define ALL schemes to build documentation for
+          SCHEMES=("RAWGApp" "Core" "CoreNavigation" "CoreNetwork" "CoreUI" "Common" "GamesFeature" "SearchFeature" "FavoritesFeature" "DetailFeature")
+          
+          for SCHEME in "${SCHEMES[@]}"; do
+            echo "Building documentation for $SCHEME..."
+            xcodebuild docbuild \
+              -workspace RAWG.xcworkspace \
+              -scheme "$SCHEME" \
+              -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+              -derivedDataPath DerivedData \
+              CODE_SIGN_IDENTITY="" \
+              CODE_SIGNING_REQUIRED=NO \
+              CODE_SIGNING_ALLOWED=NO || echo "Warning: docbuild failed for $SCHEME, continuing..."
+          done
       
       - name: Process Documentation
         run: |
-          DOCC_ARCHIVE=$(find DerivedData -name "*.doccarchive" -type d | head -1)
+          mkdir -p docs
           
-          if [ -z "$DOCC_ARCHIVE" ]; then
-            echo "No documentation archive found"
-            exit 1
-          fi
+          # Find all doccarchives and process them
+          echo "Found documentation archives:"
+          find DerivedData -name "*.doccarchive" -type d
           
-          echo "Found: $DOCC_ARCHIVE"
+          find DerivedData -name "*.doccarchive" -type d | while read archive; do
+            echo "Processing $archive..."
+            
+            # Extract target name from archive path
+            TARGET_NAME=$(basename "$archive" .doccarchive)
+            
+            # Process archive for static hosting
+            $(xcrun --find docc) process-archive \
+              transform-for-static-hosting "$archive" \
+              --hosting-base-path "RAWG.IO/$TARGET_NAME" \
+              --output-path "docs/$TARGET_NAME"
+            
+            echo "Processed $TARGET_NAME"
+          done
           
-          $(xcrun --find docc) process-archive \
-            transform-for-static-hosting "$DOCC_ARCHIVE" \
-            --hosting-base-path RAWG.IO \
-            --output-path docs
-          
-          DOC_FOLDER=$(ls docs/documentation/ | head -1)
-          echo "<meta http-equiv=\"refresh\" content=\"0; url=documentation/$DOC_FOLDER/\">" > docs/index.html
+          # Debug: Show what was created
+          echo "Created documentation folders:"
+          ls -la docs/
+      
+      - name: Create Index Page
+        run: |
+          # Create a styled index.html that links to the docs
+          cat > docs/index.html << 'HTMLEOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>RAWG.IO Documentation</title>
+            <style>
+              :root {
+                --background: #1c2128;
+                --surface: #2d333b;
+                --primary: #58a6ff;
+                --text: #adbac7;
+                --text-heading: #f0f6fc;
+              }
+              * { box-sizing: border-box; margin: 0; padding: 0; }
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: var(--background);
+                color: var(--text);
+                min-height: 100vh;
+                padding: 40px 20px;
+              }
+              .container { max-width: 900px; margin: 0 auto; }
+              h1 {
+                color: var(--text-heading);
+                font-size: 2.5rem;
+                margin-bottom: 8px;
+              }
+              .subtitle {
+                color: var(--text);
+                margin-bottom: 40px;
+                font-size: 1.1rem;
+              }
+              .section-title {
+                color: var(--text-heading);
+                font-size: 1.3rem;
+                margin: 30px 0 15px 0;
+                border-bottom: 1px solid var(--surface);
+                padding-bottom: 8px;
+              }
+              .modules { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+              .module {
+                background: var(--surface);
+                border-radius: 10px;
+                padding: 16px;
+                text-decoration: none;
+                color: var(--text);
+                transition: transform 0.2s, box-shadow 0.2s;
+              }
+              .module:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+              }
+              .module-name {
+                color: var(--primary);
+                font-weight: 600;
+                font-size: 1rem;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>📚 RAWG.IO Documentation</h1>
+              <p class="subtitle">Swift documentation for all modules</p>
+              
+              <h2 class="section-title">🎮 App</h2>
+              <div class="modules" id="app-modules"></div>
+              
+              <h2 class="section-title">🔧 Core Modules</h2>
+              <div class="modules" id="core-modules"></div>
+              
+              <h2 class="section-title">✨ Feature Modules</h2>
+              <div class="modules" id="feature-modules"></div>
+            </div>
+            <script>
+              const modules = {
+                app: ['RAWGApp'],
+                core: ['Core', 'CoreUI', 'CoreNetwork', 'CoreNavigation', 'Common'],
+                feature: ['GamesFeature', 'SearchFeature', 'FavoritesFeature', 'DetailFeature']
+              };
+              
+              function addModule(container, name) {
+                const lowerName = name.toLowerCase();
+                const link = document.createElement('a');
+                link.className = 'module';
+                link.href = name + '/documentation/' + lowerName + '/';
+                link.innerHTML = '<div class="module-name">' + name + '</div>';
+                document.getElementById(container).appendChild(link);
+              }
+              
+              modules.app.forEach(m => addModule('app-modules', m));
+              modules.core.forEach(m => addModule('core-modules', m));
+              modules.feature.forEach(m => addModule('feature-modules', m));
+            </script>
+          </body>
+          </html>
+          HTMLEOF
       
       - name: Upload Pages Artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

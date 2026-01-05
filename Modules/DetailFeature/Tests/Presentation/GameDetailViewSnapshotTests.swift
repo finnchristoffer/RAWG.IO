@@ -5,6 +5,7 @@ import SnapshotTesting
 @testable import CoreUI
 
 /// Snapshot tests for GameDetailView.
+@MainActor
 final class GameDetailViewSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 

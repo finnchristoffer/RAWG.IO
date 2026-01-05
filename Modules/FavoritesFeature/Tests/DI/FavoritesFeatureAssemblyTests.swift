@@ -7,20 +7,12 @@ import Factory
 final class FavoritesFeatureAssemblyTests: XCTestCase {
     // MARK: - Container Resolution
 
-    func test_favoritesLocalDataSource_resolves() {
-        // Act
-        let dataSource = Container.shared.favoritesLocalDataSource()
-
-        // Assert
-        XCTAssertNotNil(dataSource)
-    }
-
     func test_favoritesRepository_resolves() {
         // Act
-        let repository = Container.shared.favoritesRepository()
+        let service = Container.shared.defaultFavoritesService()
 
         // Assert
-        XCTAssertNotNil(repository)
+        XCTAssertNotNil(service)
     }
 
     func test_addFavoriteUseCase_resolves() {
@@ -63,12 +55,12 @@ final class FavoritesFeatureAssemblyTests: XCTestCase {
         XCTAssertNotNil(viewModel)
     }
 
-    func test_favoriteModelContainer_isSingleton() {
+    func test_defaultFavoritesService_isSingleton() {
         // Act
-        let container1 = Container.shared.favoriteModelContainer()
-        let container2 = Container.shared.favoriteModelContainer()
+        let service1 = Container.shared.defaultFavoritesService()
+        let service2 = Container.shared.defaultFavoritesService()
 
         // Assert - same instance
-        XCTAssertTrue(container1 === container2)
+        XCTAssertTrue(service1 === service2)
     }
 }

@@ -6,7 +6,7 @@ import Common
 /// Internal service for favorites persistence.
 /// Used by UseCase implementations, not exposed externally.
 @MainActor
-final class DefaultFavoritesService {
+final class DefaultFavoritesService: FavoritesRepositoryProtocol {
     private var modelContainer: ModelContainer?
     private var modelContext: ModelContext?
 

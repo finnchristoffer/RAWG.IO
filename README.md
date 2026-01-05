@@ -58,13 +58,10 @@
 
 > **Placeholder** - Add a GIF or screenshot showing your GitHub Actions with all checks passing.
 
-![CI Pipeline](https://via.placeholder.com/800x200.png?text=GitHub+Actions+-+All+Checks+Passing+✅)
+<img src="assets/ci-cd.png"/>
 
 ### Test Coverage Report
-
-> **Placeholder** - Add a screenshot of your code coverage report.
-
-![Test Coverage](https://via.placeholder.com/800x150.png?text=Test+Coverage+Report)
+<img src="assets/unit_test.png"/>
 
 ---
 

@@ -66,7 +66,8 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             sources: ["Modules/Core/Tests/**"],
             dependencies: [
-                .target(name: "Core")
+                .target(name: "Core"),
+                .external(name: "SnapshotTesting")
             ]
         ),
         

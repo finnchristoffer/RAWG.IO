@@ -20,22 +20,22 @@ extension Container {
 
     /// AddFavoriteUseCase - returns protocol type.
     var addFavoriteUseCase: Factory<AddFavoriteUseCaseProtocol> {
-        self { AddFavoriteUseCase(service: self.defaultFavoritesService()) as AddFavoriteUseCaseProtocol }
+        self { AddFavoriteUseCase(repository: self.defaultFavoritesService()) as AddFavoriteUseCaseProtocol }
     }
 
     /// RemoveFavoriteUseCase - returns protocol type.
     var removeFavoriteUseCase: Factory<RemoveFavoriteUseCaseProtocol> {
-        self { RemoveFavoriteUseCase(service: self.defaultFavoritesService()) as RemoveFavoriteUseCaseProtocol }
+        self { RemoveFavoriteUseCase(repository: self.defaultFavoritesService()) as RemoveFavoriteUseCaseProtocol }
     }
 
     /// IsFavoriteUseCase - returns protocol type.
     var isFavoriteUseCase: Factory<IsFavoriteUseCaseProtocol> {
-        self { IsFavoriteUseCase(service: self.defaultFavoritesService()) as IsFavoriteUseCaseProtocol }
+        self { IsFavoriteUseCase(repository: self.defaultFavoritesService()) as IsFavoriteUseCaseProtocol }
     }
 
     /// GetFavoritesUseCase - returns protocol type.
     var getFavoritesUseCase: Factory<GetFavoritesUseCaseProtocol> {
-        self { GetFavoritesUseCase(service: self.defaultFavoritesService()) as GetFavoritesUseCaseProtocol }
+        self { GetFavoritesUseCase(repository: self.defaultFavoritesService()) as GetFavoritesUseCaseProtocol }
     }
 
     // MARK: - ViewModels (Internal)

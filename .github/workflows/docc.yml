@@ -74,7 +74,7 @@ jobs:
       - name: Build Documentation
         run: |
           # Define ALL schemes to build documentation for
-          SCHEMES=("RAWGApp" "Core" "CoreNavigation" "CoreNetwork" "CoreUI" "Common" "GamesFeature" "SearchFeature" "FavoritesFeature" "DetailFeature")
+          SCHEMES=("RAWGApp" "Core" "CoreNavigation" "CoreNetwork" "CoreUI" "Common")
           
           for SCHEME in "${SCHEMES[@]}"; do
             echo "Building documentation for $SCHEME..."
@@ -190,14 +190,11 @@ jobs:
               <h2 class="section-title">🔧 Core Modules</h2>
               <div class="modules" id="core-modules"></div>
               
-              <h2 class="section-title">✨ Feature Modules</h2>
-              <div class="modules" id="feature-modules"></div>
             </div>
             <script>
               const modules = {
                 app: ['RAWGApp'],
-                core: ['Core', 'CoreUI', 'CoreNetwork', 'CoreNavigation', 'Common'],
-                feature: ['GamesFeature', 'SearchFeature', 'FavoritesFeature', 'DetailFeature']
+                core: ['Core', 'CoreUI', 'CoreNetwork', 'CoreNavigation', 'Common']
               };
               
               function addModule(container, name) {
@@ -211,7 +208,6 @@ jobs:
               
               modules.app.forEach(m => addModule('app-modules', m));
               modules.core.forEach(m => addModule('core-modules', m));
-              modules.feature.forEach(m => addModule('feature-modules', m));
             </script>
           </body>
           </html>

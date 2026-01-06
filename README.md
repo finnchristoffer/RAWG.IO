@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://via.placeholder.com/150x150.png?text=RAWG" alt="RAWG.IO Logo" width="150"/>
+  <img src="assets/icon.png" alt="RAWG.IO Logo" width="150"/>
 </p>
 
 <h1 align="center">🎮 RAWG.IO</h1>

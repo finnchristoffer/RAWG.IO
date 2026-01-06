@@ -375,6 +375,33 @@ RAWG.IO/
 
 ---
 
+## 🗺️ Roadmap
+
+### 🎯 Priority (Next Update)
+
+| # | Feature | Description | Status |
+|:-:|---------|-------------|:------:|
+| 1 | **UI Renewal** | Redesign with modern animations, polished transitions, and improved visual hierarchy | 🔜 Planned |
+| 2 | **80% Test Coverage** | Increase unit test coverage across all modules to ensure reliability | 🔜 Planned |
+| 3 | **Custom DI Framework** | Replace Factory with custom dependency injection implementation | 🔜 Planned |
+
+### ✨ Future Enhancements
+
+| Feature | Description |
+|---------|-------------|
+| **Offline Mode** | Cache games data for browsing without internet connection |
+| **Theme System** | Dark/Light theme with system-aware automatic switching |
+| **Localization** | Multi-language support (EN, ID, etc.) |
+| **iOS Widgets** | Home screen widgets showing favorite games |
+| **Deep Links** | Share direct links to specific game details |
+| **Performance Monitoring** | Crash reporting & analytics integration |
+| **Accessibility** | VoiceOver support, Dynamic Type, contrast improvements |
+| **Enhanced Loading** | Skeleton loading states, improved pull-to-refresh |
+
+> 💡 Have a suggestion? Feel free to [open an issue](https://github.com/finnchristoffer/RAWG.IO/issues)!
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please follow these guidelines:

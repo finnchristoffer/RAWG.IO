@@ -2,72 +2,87 @@ import SwiftUI
 
 /// Skeleton loading placeholder for GameCard.
 public struct GameCardSkeleton: View {
-    @State private var isAnimating = false
+    @State private var shimmerOffset: CGFloat = -300
 
     public init() {}
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 0) {
             // Image placeholder
-            RoundedRectangle(cornerRadius: 12)
-                .fill(shimmerGradient)
+            RoundedRectangle(cornerRadius: 0)
+                .fill(ColorTokens.textSecondary.opacity(0.15))
                 .frame(height: 180)
+                .overlay(shimmerOverlay)
+                .clipped()
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 12) {
                 // Title placeholder
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(shimmerGradient)
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(ColorTokens.textSecondary.opacity(0.15))
                     .frame(height: 20)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.trailing, 40)
+                    .overlay(shimmerOverlay)
 
-                // Rating placeholder
-                HStack(spacing: 8) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(shimmerGradient)
-                        .frame(width: 60, height: 16)
+                // Rating and platforms row
+                HStack(spacing: 12) {
+                    // Rating placeholder
+                    Capsule()
+                        .fill(ColorTokens.textSecondary.opacity(0.15))
+                        .frame(width: 70, height: 28)
+                        .overlay(shimmerOverlay)
 
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(shimmerGradient)
-                        .frame(width: 80, height: 16)
-                }
+                    Spacer()
 
-                // Platforms placeholder
-                HStack(spacing: 8) {
-                    ForEach(0..<3, id: \.self) { _ in
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(shimmerGradient)
-                            .frame(width: 24, height: 24)
+                    // Platforms placeholder
+                    HStack(spacing: 6) {
+                        ForEach(0..<3, id: \.self) { _ in
+                            Circle()
+                                .fill(ColorTokens.textSecondary.opacity(0.15))
+                                .frame(width: 28, height: 28)
+                                .overlay(shimmerOverlay)
+                        }
                     }
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.bottom, 12)
+            .padding(14)
         }
         .background(ColorTokens.surface)
-        .cornerRadius(16)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(
+            color: .black.opacity(0.05),
+            radius: 8,
+            x: 0,
+            y: 4
+        )
         .onAppear {
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                isAnimating = true
+            withAnimation(
+                .linear(duration: 1.2)
+                .repeatForever(autoreverses: false)
+            ) {
+                shimmerOffset = 300
             }
         }
     }
 
-    private var shimmerGradient: some ShapeStyle {
+    private var shimmerOverlay: some View {
         LinearGradient(
             colors: [
-                ColorTokens.textSecondary.opacity(0.3),
-                ColorTokens.textSecondary.opacity(0.1),
-                ColorTokens.textSecondary.opacity(0.3)
+                .clear,
+                .white.opacity(0.4),
+                .clear
             ],
-            startPoint: isAnimating ? .leading : .trailing,
-            endPoint: isAnimating ? .trailing : .leading
+            startPoint: .leading,
+            endPoint: .trailing
         )
+        .frame(width: 100)
+        .offset(x: shimmerOffset)
+        .clipped()
     }
 }
 
 #Preview {
-    VStack(spacing: 16) {
+    VStack(spacing: 20) {
         GameCardSkeleton()
         GameCardSkeleton()
     }

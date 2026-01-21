@@ -17,6 +17,8 @@ public struct GameCard: View {
     private let rating: Double
     private let platforms: [String]
 
+    @State private var isPressed = false
+
     public init(
         title: String,
         imageURL: URL?,
@@ -38,7 +40,7 @@ public struct GameCard: View {
                 .clipped()
 
             // Content
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 10) {
                 // Title
                 Text(title)
                     .font(Typography.headline)
@@ -57,29 +59,50 @@ public struct GameCard: View {
                     }
                 }
             }
-            .padding(12)
+            .padding(14)
         }
         .background(ColorTokens.surface)
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(
+            color: .black.opacity(0.08),
+            radius: 12,
+            x: 0,
+            y: 6
+        )
+        .scaleEffect(isPressed ? 0.97 : 1.0)
+        .animation(.spring(response: 0.2, dampingFraction: 0.7), value: isPressed)
+        .onLongPressGesture(
+            minimumDuration: .infinity,
+            pressing: { pressing in
+                isPressed = pressing
+            },
+            perform: {}
+        )
     }
 
     // MARK: - Subviews
 
     private var ratingView: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 6) {
             Image(systemName: "star.fill")
-                .font(.caption)
+                .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(ColorTokens.rating(rating))
 
             Text(String(format: "%.1f", rating))
-                .font(Typography.caption)
-                .foregroundColor(ColorTokens.textSecondary)
+                .font(Typography.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(ColorTokens.textPrimary)
         }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(
+            Capsule()
+                .fill(ColorTokens.rating(rating).opacity(0.15))
+        )
     }
 
     private var platformsView: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 6) {
             ForEach(platforms.prefix(3), id: \.self) { platform in
                 platformIcon(for: platform)
             }
@@ -106,15 +129,20 @@ public struct GameCard: View {
         }
 
         return Image(systemName: iconName)
-            .font(.caption2)
+            .font(.system(size: 14, weight: .medium))
             .foregroundColor(ColorTokens.textSecondary)
+            .frame(width: 28, height: 28)
+            .background(
+                Circle()
+                    .fill(ColorTokens.textSecondary.opacity(0.1))
+            )
     }
 }
 
 #if DEBUG
 #Preview {
     ScrollView {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             GameCard(
                 title: "The Witcher 3: Wild Hunt",
                 imageURL: nil,

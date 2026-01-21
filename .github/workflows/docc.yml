@@ -43,13 +43,39 @@ jobs:
           sudo xcodebuild -license accept
           sudo xcodebuild -runFirstLaunch
       
-      - name: Install iOS Simulator Runtime
+      - name: Prepare Simulator Service
         run: |
-          echo "Downloading iOS platform..."
-          xcodebuild -downloadPlatform iOS
+          # Kill any existing simulator services to ensure a clean slate
+          sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService || true
+          # Give time for cleanup
+          sleep 5
+      
+      - name: Install iOS Simulator Runtime
+        uses: nick-invision/retry@v3
+        with:
+          timeout_minutes: 20
+          max_attempts: 3
+          retry_wait_seconds: 60
+          command: |
+            echo "Downloading iOS platform..."
+            xcodebuild -downloadPlatform iOS
+      
+      - name: Boot Simulator
+        run: |
+          echo "Available runtimes:"
+          xcrun simctl list runtimes
           
           echo "Available devices:"
           xcrun simctl list devices available
+          
+          # Boot a simulator to ensure service is ready
+          DEVICE_UDID=$(xcrun simctl list devices available -j | jq -r '.devices | to_entries | map(select(.key | contains("iOS"))) | .[0].value | .[0].udid' 2>/dev/null || echo "")
+          
+          if [ -n "$DEVICE_UDID" ]; then
+            echo "Booting simulator: $DEVICE_UDID"
+            xcrun simctl boot "$DEVICE_UDID" || true
+            sleep 5
+          fi
       
       - name: Install Mise
         uses: jdx/mise-action@v2

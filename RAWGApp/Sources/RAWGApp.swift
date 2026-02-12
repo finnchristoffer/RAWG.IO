@@ -1,3 +1,4 @@
+// RAWG.IO - Game Discovery App
 import SwiftUI
 import SwiftData
 import Core

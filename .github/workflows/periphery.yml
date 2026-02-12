@@ -3,10 +3,6 @@ name: Periphery
 on:
   pull_request:
     branches: [main]
-    paths:
-      - '**/*.swift'
-      - '.periphery.yml'
-      - 'Project.swift'
   push:
     branches: [main]
     paths:
@@ -23,47 +19,57 @@ jobs:
   periphery:
     name: Dead Code Detection
     runs-on: macos-15
-    
+    timeout-minutes: 30
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
+      - name: Check for relevant changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            swift:
+              - '**/*.swift'
+              - '.periphery.yml'
+              - 'Project.swift'
+
       - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '16.2'
-      
-      - name: Accept Xcode License
-        run: sudo xcodebuild -license accept
-      
-      - name: Install iOS Simulator Runtime
-        run: |
-          sudo xcodebuild -runFirstLaunch
-          xcodebuild -downloadPlatform iOS || echo "Download attempted"
-      
-      - name: Install Mise
-        uses: jdx/mise-action@v2
-        with:
-          install: true
-      
-      - name: Cache Swift Packages
+        if: steps.filter.outputs.swift == 'true'
+        uses: ./.github/actions/setup-xcode
+
+      - name: Setup Tuist
+        if: steps.filter.outputs.swift == 'true'
+        uses: ./.github/actions/setup-tuist
+
+      - name: Cache Homebrew Downloads
+        if: steps.filter.outputs.swift == 'true'
         uses: actions/cache@v4
         with:
-          path: Tuist/.build
-          key: ${{ runner.os }}-spm-${{ hashFiles('Tuist/Package.resolved') }}
+          path: ~/Library/Caches/Homebrew
+          key: ${{ runner.os }}-brew-periphery-v2
           restore-keys: |
-            ${{ runner.os }}-spm-
-      
+            ${{ runner.os }}-brew-periphery-
+
       - name: Install Periphery
-        run: brew install peripheryapp/periphery/periphery
-      
-      - name: Fetch Dependencies
-        run: tuist install
-      
-      - name: Generate Project
-        run: tuist generate --no-open
-      
+        if: steps.filter.outputs.swift == 'true'
+        run: |
+          brew tap peripheryapp/periphery
+          brew install periphery
+          which periphery && periphery version
+
+      - name: Cache DerivedData
+        if: steps.filter.outputs.swift == 'true'
+        uses: actions/cache@v4
+        with:
+          path: .derivedData
+          key: ${{ runner.os }}-deriveddata-periphery-${{ hashFiles('**/*.swift', 'Project.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-periphery-
+
       - name: Build with Tuist
+        if: steps.filter.outputs.swift == 'true'
         run: |
           tuist build RAWGApp -- \
             -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
@@ -71,8 +77,9 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
-      
+
       - name: Run Periphery
+        if: steps.filter.outputs.swift == 'true'
         run: |
           periphery scan \
             --project RAWG.xcodeproj \
@@ -91,3 +98,7 @@ jobs:
             --retain-public \
             --retain-objc-accessible \
             --quiet
+
+      - name: Skip notice
+        if: steps.filter.outputs.swift != 'true'
+        run: echo "No Swift/project files changed — skipping dead code detection"

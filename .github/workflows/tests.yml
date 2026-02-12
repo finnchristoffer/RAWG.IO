@@ -5,6 +5,11 @@ on:
     branches: [main]
   push:
     branches: [main]
+    paths:
+      - '**/*.swift'
+      - 'Project.swift'
+      - 'Tuist/**'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,97 +19,45 @@ jobs:
   tests:
     name: Unit Tests
     runs-on: macos-15
-    
+    timeout-minutes: 30
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1
+        id: setup-xcode
+        uses: ./.github/actions/setup-xcode
         with:
-          xcode-version: '16.1'
-      
-      - name: Prepare Simulator Service
-        run: |
-          # Kill any existing simulator services to ensure a clean slate
-          sudo killall -9 com.apple.CoreSimulator.CoreSimulatorService || true
-          sudo xcodebuild -license accept
-          sudo xcodebuild -runFirstLaunch
-      
-      - name: Download iOS Platform
-        uses: nick-invision/retry@v3
+          boot-simulator: 'true'
+
+      - name: Setup Tuist
+        uses: ./.github/actions/setup-tuist
+
+      - name: Cache DerivedData
+        uses: actions/cache@v4
         with:
-          timeout_minutes: 20
-          max_attempts: 3
-          retry_wait_seconds: 60
-          command: |
-            echo "Downloading iOS platform..."
-            xcodebuild -downloadPlatform iOS
-      
-      - name: Create and Boot Simulator
-        id: simulator
-        run: |
-          sleep 5
-          
-          RUNTIME_ID=$(xcrun simctl list runtimes -j | jq -r '.runtimes[] | select(.isAvailable==true) | select(.name | contains("iOS")) | .identifier' | tail -1)
-          
-          echo "Found Runtime ID: $RUNTIME_ID"
-          
-          if [ -z "$RUNTIME_ID" ]; then
-             echo "Failed to find iOS runtime ID!"
-             xcrun simctl list runtimes
-             exit 1
-          fi
-          
-          DEVICETYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-15"
-          NAME="ci-tests-$RANDOM"
-          
-          echo "Creating simulator '$NAME'..."
-          UDID=$(xcrun simctl create "$NAME" "$DEVICETYPE" "$RUNTIME_ID")
-          echo "Created simulator: $NAME ($UDID)"
-          
-          echo "Booting simulator..."
-          xcrun simctl boot "$UDID" || true
-          
-          echo "Waiting for boot..."
-          for i in $(seq 1 30); do
-            STATE=$(xcrun simctl list devices -j | jq -r ".devices[\"$RUNTIME_ID\"][] | select(.udid==\"$UDID\") | .state")
-            echo "  State: $STATE"
-            if [ "$STATE" = "Booted" ]; then
-              echo "Simulator booted!"
-              break
-            fi
-            sleep 2
-          done
-          
-          echo "device_udid=$UDID" >> $GITHUB_OUTPUT
-      
-      - name: Install Mise
-        uses: jdx/mise-action@v2
-        with:
-          install: true
-      
-      - name: Fetch Dependencies
-        run: tuist install
-      
-      - name: Generate Project
-        run: tuist generate --no-open
-      
+          path: DerivedData
+          key: ${{ runner.os }}-deriveddata-tests-${{ hashFiles('**/*.swift', 'Project.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-deriveddata-tests-
+
       - name: Run Tests
         env:
-          SIMULATOR_UDID: ${{ steps.simulator.outputs.device_udid }}
+          SIMULATOR_UDID: ${{ steps.setup-xcode.outputs.device-udid }}
         run: |
           xcodebuild test \
             -workspace RAWG.xcworkspace \
             -scheme RAWGApp \
             -destination "id=$SIMULATOR_UDID" \
+            -derivedDataPath DerivedData \
             -resultBundlePath TestResults.xcresult \
             -enableCodeCoverage YES \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             | xcpretty --report junit --output test-results.xml
-      
+
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         if: always()
@@ -114,8 +67,8 @@ jobs:
             TestResults.xcresult
             test-results.xml
           retention-days: 14
-      
+
       - name: Cleanup Simulator
         if: always()
         run: |
-          xcrun simctl delete "${{ steps.simulator.outputs.device_udid }}" || true
+          xcrun simctl delete "${{ steps.setup-xcode.outputs.device-udid }}" || true

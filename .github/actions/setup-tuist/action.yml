@@ -1,0 +1,26 @@
+name: 'Setup Tuist'
+description: 'Install Mise + Tuist, cache SPM packages, and generate project'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Mise
+      uses: jdx/mise-action@v2
+      with:
+        install: true
+
+    - name: Cache SPM Packages
+      uses: actions/cache@v4
+      with:
+        path: Tuist/.build
+        key: ${{ runner.os }}-spm-${{ hashFiles('Tuist/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Fetch Dependencies
+      shell: bash
+      run: tuist install
+
+    - name: Generate Project
+      shell: bash
+      run: tuist generate --no-open

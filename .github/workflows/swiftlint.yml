@@ -3,9 +3,6 @@ name: SwiftLint
 on:
   pull_request:
     branches: [main]
-    paths:
-      - '**/*.swift'
-      - '.swiftlint.yml'
   push:
     branches: [main]
     paths:
@@ -20,13 +17,40 @@ jobs:
   swiftlint:
     name: SwiftLint
     runs-on: macos-15
-    
+    timeout-minutes: 10
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
+      - name: Check for relevant changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            swift:
+              - '**/*.swift'
+              - '.swiftlint.yml'
+
+      - name: Cache Homebrew Downloads
+        if: steps.filter.outputs.swift == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: ${{ runner.os }}-brew-swiftlint-v2
+          restore-keys: |
+            ${{ runner.os }}-brew-swiftlint-
+
       - name: Install SwiftLint
-        run: brew install swiftlint
-      
+        if: steps.filter.outputs.swift == 'true'
+        run: |
+          brew install swiftlint
+          which swiftlint && swiftlint version
+
       - name: Run SwiftLint
-        run: swiftlint lint --config .swiftlint.yml --reporter github-actions-logging
+        if: steps.filter.outputs.swift == 'true'
+        run: swiftlint lint --config .swiftlint.yml --strict --reporter github-actions-logging
+
+      - name: Skip notice
+        if: steps.filter.outputs.swift != 'true'
+        run: echo "No Swift files changed — skipping SwiftLint"

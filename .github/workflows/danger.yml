@@ -8,28 +8,46 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   danger:
     name: Danger PR Review
     runs-on: macos-15
-    
+    timeout-minutes: 15
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.0'
-      
+          xcode-version: '16.2'
+
+      - name: Cache Homebrew Downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: ${{ runner.os }}-brew-danger-swiftlint-v2
+          restore-keys: |
+            ${{ runner.os }}-brew-danger-swiftlint-
+
       - name: Install SwiftLint
-        run: brew install swiftlint
-      
+        run: |
+          brew install swiftlint
+          which swiftlint && swiftlint version
+
       - name: Install Danger
-        run: brew install danger/tap/danger-swift
-      
+        run: |
+          brew tap danger/tap
+          brew install danger-swift
+          which danger-swift && danger-swift --version || true
+
       - name: Run Danger
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
